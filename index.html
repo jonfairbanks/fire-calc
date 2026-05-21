@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>When might I be able to FIRE?</title>
+  <title>When might you be able to FIRE?</title>
   <style>
     :root {
       --gray-50: #0f172a;
@@ -82,6 +82,29 @@
       color: var(--orange-500);
     }
 
+    .github-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      color: var(--gray-500);
+      text-decoration: none;
+      transition: background 120ms ease, color 120ms ease;
+    }
+
+    .github-link:hover {
+      background: rgba(148, 163, 184, 0.1);
+      color: var(--gray-900);
+    }
+
+    .github-link svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
     .layout {
       width: 100%;
       display: flex;
@@ -106,7 +129,6 @@
     }
 
     .panel,
-    .card,
     .detail,
     .chart-box,
     .assumptions {
@@ -120,6 +142,7 @@
       display: grid;
       gap: 20px;
       padding: 16px;
+      background: rgba(17, 24, 39, 0.72);
     }
 
     .panel h2,
@@ -247,7 +270,8 @@
     }
 
     .card {
-      padding: 16px;
+      padding: 0 0 12px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.16);
     }
 
     .stat-label {
@@ -310,11 +334,13 @@
 
     .milestone-card:hover {
       border-color: var(--gray-300);
+      background: rgba(23, 32, 51, 0.72);
     }
 
     .milestone-card.selected {
-      border-color: var(--blue-300);
-      background: var(--blue-50);
+      border-color: rgba(96, 165, 250, 0.78);
+      background: rgba(20, 36, 61, 0.42);
+      box-shadow: inset 3px 0 0 var(--blue-300);
     }
 
     .milestone-head,
@@ -450,6 +476,16 @@
       align-items: center;
       gap: 7px;
       white-space: nowrap;
+      cursor: default;
+      transition: opacity 120ms ease;
+    }
+
+    .legend:hover .legend-item {
+      opacity: 0.55;
+    }
+
+    .legend:hover .legend-item:hover {
+      opacity: 1;
     }
 
     .legend-swatch {
@@ -461,37 +497,29 @@
 
     .assumptions {
       display: grid;
-      gap: 6px;
+      grid-template-columns: 1fr;
+      gap: 10px 24px;
       padding: 16px;
       color: var(--gray-500);
-      font-size: 14px;
+      font-size: 13px;
       line-height: 1.45;
     }
 
-    .assumptions p {
+    .assumption-item {
       margin: 0;
     }
 
-    .assumptions strong {
+    .assumption-item dt {
+      margin: 0;
       color: var(--gray-700);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
     }
 
-    .site-footer {
-      padding: 0 16px 24px;
-      color: var(--gray-400);
-      font-size: 12px;
-      line-height: 1.5;
-      text-align: center;
-    }
-
-    .site-footer a {
-      color: var(--gray-500);
-      text-decoration: none;
-    }
-
-    .site-footer a:hover {
-      color: var(--gray-700);
-      text-decoration: underline;
+    .assumption-item dd {
+      margin: 2px 0 0;
     }
 
     .hidden {
@@ -530,7 +558,11 @@
       }
 
       .chart-wrap {
-        height: 400px;
+        height: 440px;
+      }
+
+      .assumptions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
@@ -543,6 +575,9 @@
 
       .sidebar {
         width: 320px;
+        position: sticky;
+        top: 24px;
+        align-self: flex-start;
       }
 
       .snapshot-grid {
@@ -564,7 +599,12 @@
 <body>
   <header class="site-header">
     <div class="site-header-inner">
-      <h1>When might I be able to <span>FIRE</span>?</h1>
+      <h1>When might you be able to <span>FIRE</span>?</h1>
+      <a class="github-link" href="https://github.com/jonfairbanks/fire-calc" target="_blank" rel="noopener noreferrer" aria-label="View on GitHub">
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M8 0C3.58 0 0 3.67 0 8.2c0 3.62 2.29 6.7 5.47 7.79.4.08.55-.18.55-.4 0-.2-.01-.86-.01-1.56-2.01.38-2.53-.5-2.69-.96-.09-.24-.48-.97-.82-1.17-.28-.15-.68-.52-.01-.53.63-.01 1.08.59 1.23.84.72 1.24 1.87.89 2.33.68.07-.53.28-.89.51-1.1-1.78-.21-3.64-.91-3.64-4.04 0-.89.31-1.62.82-2.19-.08-.21-.36-1.04.08-2.16 0 0 .67-.22 2.2.84A7.43 7.43 0 0 1 8 3.96c.68 0 1.36.09 2 .28 1.53-1.06 2.2-.84 2.2-.84.44 1.12.16 1.95.08 2.16.51.57.82 1.3.82 2.19 0 3.14-1.87 3.83-3.65 4.04.29.26.54.75.54 1.52 0 1.1-.01 1.98-.01 2.25 0 .22.15.48.55.4A8.11 8.11 0 0 0 16 8.2C16 3.67 12.42 0 8 0Z"/>
+        </svg>
+      </a>
     </div>
   </header>
 
@@ -669,17 +709,9 @@
     <main class="main">
       <div class="stack">
         <section>
-          <h2 class="section-title">Current Snapshot</h2>
+          <h2 class="section-title">Current Plan</h2>
           <div class="snapshot-grid" id="snapshot"></div>
         </section>
-
-        <section>
-          <h2 class="section-title">FIRE Milestones</h2>
-          <div class="milestones-mobile" id="milestonesMobile"></div>
-          <div class="milestones-grid" id="milestonesGrid"></div>
-        </section>
-
-        <section class="detail" id="detail"></section>
 
         <section>
           <h2 class="section-title">Portfolio Growth Projection</h2>
@@ -692,16 +724,20 @@
         </section>
 
         <section>
+          <h2 class="section-title">FIRE Milestones</h2>
+          <div class="milestones-mobile" id="milestonesMobile"></div>
+          <div class="milestones-grid" id="milestonesGrid"></div>
+        </section>
+
+        <section class="detail" id="detail"></section>
+
+        <section>
           <h2 class="section-title">Assumptions</h2>
           <div class="assumptions" id="assumptions"></div>
         </section>
       </div>
     </main>
   </div>
-
-  <footer class="site-footer">
-    <a href="https://github.com/jonfairbanks/fire-calc" target="_blank" rel="noopener noreferrer">View on GitHub</a>
-  </footer>
 
   <script>
     const DEFAULT_INPUTS = {
@@ -743,6 +779,7 @@
     let resizeRaf = 0;
     let customGrowthMode = !TIER_RATES.some((rate) => rate === inputs.portfolioGrowthRate);
     let chartHoverIndex = null;
+    let chartHighlightKey = null;
 
     function fmt(n) {
       const abs = Math.abs(n);
@@ -849,7 +886,7 @@
       return null;
     }
 
-    function buildMilestone(input, type, label, description, formula, color, yearsAway, multiplier) {
+    function buildMilestone(input, type, label, description, formula, color, yearsAway, multiplier, shortFormula = formula) {
       if (yearsAway === null) {
         return {
           type,
@@ -861,6 +898,7 @@
           projectedPortfolio: null,
           description,
           formula,
+          shortFormula,
           color
         };
       }
@@ -874,6 +912,7 @@
         projectedPortfolio: portfolioAtYear(input, yearsAway),
         description,
         formula,
+        shortFormula,
         color
       };
     }
@@ -894,7 +933,8 @@
           `${fmt(input.currentInvestments)} invested already grows to FIRE number by age 65 at ${growthPct}% - you can stop all contributions and still retire.${ssNote}`,
           "#38bdf8",
           findCoastFireYear(input, 65),
-          25
+          25,
+          "Current investments can grow to the age 65 FIRE number without more contributions."
         ),
         buildMilestone(
           input,
@@ -904,7 +944,8 @@
           `${fmt(input.currentInvestments)} invested already grows to FIRE number by age 55 at ${growthPct}% - you can stop all contributions and still retire.${ssNote}`,
           "#facc15",
           findCoastFireYear(input, 55),
-          25
+          25,
+          "Current investments can grow to the age 55 FIRE number without more contributions."
         ),
         buildMilestone(
           input,
@@ -913,7 +954,9 @@
           "Part-time covers gap",
           `Portfolio hits (spending - ${fmt(input.baristaIncome)} part-time income) x 25. A part-time job covers the gap - full-time work is optional.${ssNote}`,
           "#a855f7",
-          findBaristaFireYear(input)
+          findBaristaFireYear(input),
+          null,
+          `Portfolio reaches the part-time income gap x 25.`
         ),
         buildMilestone(
           input,
@@ -923,7 +966,8 @@
           `Portfolio reaches spending x 25 (the 4% rule). Spending grows at ${spendGrowthPct}%/yr, portfolio compounds at ${growthPct}%.${ssNote}`,
           COLOR_BY_KEY.fireNumber,
           findCrossoverYear(input, 25),
-          25
+          25,
+          "Portfolio reaches spending x 25."
         ),
         buildMilestone(
           input,
@@ -933,7 +977,8 @@
           `Portfolio reaches spending x 33 (~3% withdrawal rate). Provides a comfortable safety margin beyond basic FIRE.${ssNote}`,
           "#f97316",
           findCrossoverYear(input, 33),
-          33
+          33,
+          "Portfolio reaches spending x 33."
         ),
         buildMilestone(
           input,
@@ -943,7 +988,8 @@
           `Portfolio reaches spending x 50 (2% withdrawal rate). Supports a luxurious lifestyle with very conservative drawdown.${ssNote}`,
           "#ef4444",
           findCrossoverYear(input, 50),
-          50
+          50,
+          "Portfolio reaches spending x 50."
         )
       ];
     }
@@ -1069,7 +1115,7 @@
           </div>
           <p class="milestone-desc">${escapeHtml(m.description)}</p>
           ${body}
-          ${unreachable ? "" : `<p class="milestone-formula">${escapeHtml(m.formula)}</p>`}
+          ${unreachable ? "" : `<p class="milestone-formula">${escapeHtml(m.shortFormula)}</p>`}
         </button>
       `;
     }
@@ -1138,11 +1184,11 @@
 
     function renderAssumptions(assumptions) {
       document.getElementById("assumptions").innerHTML = `
-        <p><strong>Spending:</strong> ${escapeHtml(assumptions.spending)}</p>
-        <p><strong>Contributions:</strong> ${escapeHtml(assumptions.contributions)}</p>
-        <p><strong>Return:</strong> ${escapeHtml(assumptions.returnRate)}</p>
-        <p><strong>Starting portfolio:</strong> ${escapeHtml(assumptions.startingPortfolio)}</p>
-        <p><strong>Chart horizon:</strong> ${escapeHtml(assumptions.horizon)}</p>
+        <dl class="assumption-item"><dt>Spending</dt><dd>${escapeHtml(assumptions.spending)}</dd></dl>
+        <dl class="assumption-item"><dt>Contributions</dt><dd>${escapeHtml(assumptions.contributions)}</dd></dl>
+        <dl class="assumption-item"><dt>Return</dt><dd>${escapeHtml(assumptions.returnRate)}</dd></dl>
+        <dl class="assumption-item"><dt>Starting Portfolio</dt><dd>${escapeHtml(assumptions.startingPortfolio)}</dd></dl>
+        <dl class="assumption-item"><dt>Chart Horizon</dt><dd>${escapeHtml(assumptions.horizon)}</dd></dl>
       `;
     }
 
@@ -1198,8 +1244,9 @@
       SERIES.forEach(([key], seriesIndex) => {
         ctx.beginPath();
         ctx.strokeStyle = COLOR_BY_KEY[key];
-        ctx.globalAlpha = key === "portfolioValue" ? 1 : 0.62;
-        ctx.lineWidth = key === "portfolioValue" ? 2.5 : 1.25;
+        const isHighlighted = chartHighlightKey === null || chartHighlightKey === key;
+        ctx.globalAlpha = isHighlighted ? (key === "portfolioValue" ? 1 : 0.7) : 0.16;
+        ctx.lineWidth = key === "portfolioValue" ? (isHighlighted ? 3 : 2) : (isHighlighted ? 1.5 : 1);
         ctx.setLineDash(key === "portfolioValue" ? [] : [5, 5]);
         projection.forEach((row, index) => {
           const xx = x(row.year);
@@ -1364,12 +1411,23 @@
     }
 
     function renderLegend() {
-      document.getElementById("legend").innerHTML = SERIES.map(([key, label]) => `
-        <span class="legend-item" style="color:${COLOR_BY_KEY[key]}">
+      const legend = document.getElementById("legend");
+      legend.innerHTML = SERIES.map(([key, label]) => `
+        <span class="legend-item" data-series="${escapeHtml(key)}" style="color:${COLOR_BY_KEY[key]}">
           <span class="legend-swatch"></span>
           <span style="color:#4b5563">${escapeHtml(label)}</span>
         </span>
       `).join("");
+      legend.querySelectorAll(".legend-item").forEach((item) => {
+        item.addEventListener("mouseenter", () => {
+          chartHighlightKey = item.dataset.series;
+          if (currentResult) drawChart(currentResult.projection);
+        });
+        item.addEventListener("mouseleave", () => {
+          chartHighlightKey = null;
+          if (currentResult) drawChart(currentResult.projection);
+        });
+      });
     }
 
     function render() {
