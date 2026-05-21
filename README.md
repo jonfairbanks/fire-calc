@@ -2,6 +2,8 @@
 
 A simple, standalone calculator for exploring when you might be able to reach different FIRE milestones.
 
+All data stays local and does not leave your browser.
+
 ![FIRE Calculator dashboard](dashboard.png)
 
 ## What It Shows
@@ -11,7 +13,7 @@ A simple, standalone calculator for exploring when you might be able to reach di
 - How inflation, annual contributions, and portfolio growth affect the timeline.
 - A portfolio projection chart with key milestone markers.
 
-The numbers are estimates, not financial advice. Small changes to return, inflation, spending, or contributions can move the results by years.
+**The numbers are estimates, not financial advice.** Small changes to return, inflation, spending, or contributions can move the results by years.
 
 ## Main Assumptions
 
