@@ -1,0 +1,1432 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>When might I be able to FIRE?</title>
+  <style>
+    :root {
+      --gray-50: #0f172a;
+      --gray-100: #111827;
+      --gray-200: #273244;
+      --gray-300: #3f4b5f;
+      --gray-400: #94a3b8;
+      --gray-500: #cbd5e1;
+      --gray-600: #dbe4ef;
+      --gray-700: #e5edf7;
+      --gray-900: #f8fafc;
+      --surface: #111827;
+      --surface-raised: #172033;
+      --surface-soft: #0b1220;
+      --blue-50: #14243d;
+      --blue-300: #60a5fa;
+      --blue-400: #60a5fa;
+      --blue-500: #3b82f6;
+      --blue-600: #2563eb;
+      --orange-500: #f97316;
+      --green-600: #22c55e;
+      --amber-700: #facc15;
+      --red-100: #431b24;
+      --red-600: #f87171;
+      color-scheme: dark;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top left, #172554 0, #0f172a 32%, #020617 100%);
+      color: var(--gray-900);
+      font-family: inherit;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+    }
+
+    .site-header {
+      border-bottom: 1px solid var(--gray-200);
+      background: rgba(15, 23, 42, 0.92);
+      padding: 12px 16px;
+    }
+
+    .site-header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--gray-700);
+      font-size: 20px;
+      line-height: 1.2;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    h1 span {
+      color: var(--orange-500);
+    }
+
+    .layout {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding: 24px 16px;
+    }
+
+    .sidebar {
+      width: 100%;
+      flex-shrink: 0;
+    }
+
+    .main {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .stack {
+      display: grid;
+      gap: 24px;
+    }
+
+    .panel,
+    .card,
+    .detail,
+    .chart-box,
+    .assumptions {
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      background: rgba(17, 24, 39, 0.88);
+      box-shadow: 0 16px 40px rgba(2, 6, 23, 0.18);
+    }
+
+    .panel {
+      display: grid;
+      gap: 20px;
+      padding: 16px;
+    }
+
+    .panel h2,
+    .detail h2 {
+      margin: 0;
+      color: var(--gray-700);
+      font-size: 14px;
+      line-height: 1.4;
+      font-weight: 600;
+    }
+
+    .field {
+      display: grid;
+      gap: 4px;
+    }
+
+    .field label,
+    .range-label {
+      display: block;
+      color: var(--gray-500);
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 500;
+    }
+
+    .input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .affix {
+      color: var(--gray-400);
+      font-size: 12px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+      background: var(--surface-soft);
+      color: var(--gray-900);
+      padding: 6px 12px;
+      font-size: 14px;
+      line-height: 1.45;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--blue-400);
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+
+    .tier-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tier {
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+      background: var(--gray-100);
+      color: var(--gray-600);
+      padding: 4px 10px;
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 500;
+      transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+    }
+
+    .tier:hover {
+      background: var(--gray-200);
+    }
+
+    .tier.selected {
+      border-color: var(--blue-600);
+      background: var(--blue-600);
+      color: #fff;
+    }
+
+    .ss-box {
+      display: grid;
+      gap: 12px;
+      border: 1px solid var(--gray-200);
+      border-radius: 4px;
+      background: rgba(15, 23, 42, 0.72);
+      padding: 12px;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--gray-600);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .check-row input {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      accent-color: var(--blue-600);
+    }
+
+    .section-title {
+      margin: 0 0 12px;
+      color: var(--gray-500);
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .snapshot-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .card {
+      padding: 16px;
+    }
+
+    .stat-label {
+      margin: 0;
+      color: var(--gray-500);
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .stat-value {
+      margin: 4px 0 0;
+      color: var(--gray-900);
+      font-size: 24px;
+      line-height: 1.25;
+      font-weight: 700;
+    }
+
+    .milestones-mobile {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 8px;
+    }
+
+    .milestones-mobile::-webkit-scrollbar {
+      display: none;
+    }
+
+    .milestones-mobile .milestone-card {
+      width: 75vw;
+      flex-shrink: 0;
+      scroll-snap-align: center;
+    }
+
+    .milestones-grid {
+      display: none;
+      gap: 12px;
+    }
+
+    .milestone-card {
+      width: 100%;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      background: rgba(17, 24, 39, 0.88);
+      padding: 16px;
+      text-align: left;
+      transition: background 120ms ease, border-color 120ms ease;
+    }
+
+    .milestone-card:hover {
+      border-color: var(--gray-300);
+    }
+
+    .milestone-card.selected {
+      border-color: var(--blue-300);
+      background: var(--blue-50);
+    }
+
+    .milestone-head,
+    .detail-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      flex: 0 0 8px;
+      border-radius: 999px;
+    }
+
+    .milestone-label {
+      color: var(--gray-500);
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .milestone-desc,
+    .milestone-age,
+    .milestone-formula,
+    .detail-copy,
+    .detail-subcopy {
+      margin: 0;
+      color: var(--gray-400);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .milestone-desc {
+      margin-top: 4px;
+    }
+
+    .milestone-year {
+      margin: 8px 0 0;
+      color: var(--gray-900);
+      font-size: 24px;
+      line-height: 1.25;
+      font-weight: 700;
+    }
+
+    .milestone-year.now {
+      color: var(--green-600);
+    }
+
+    .milestone-year.na {
+      color: var(--gray-300);
+    }
+
+    .milestone-formula {
+      margin-top: 8px;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .milestone-formula.off-track-copy {
+      margin-top: 10px;
+      font-size: 10px;
+      line-height: 1.45;
+    }
+
+    .detail {
+      padding: 24px;
+    }
+
+    .detail-copy {
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .detail-kicker {
+      margin: 0;
+      color: var(--gray-500);
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .detail-value {
+      margin: 4px 0 0;
+      color: var(--gray-900);
+      font-size: 24px;
+      line-height: 1.15;
+      font-weight: 700;
+    }
+
+    .chart-box {
+      padding: 8px;
+    }
+
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 280px;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px 14px;
+      padding: 4px 4px 8px;
+      color: var(--gray-600);
+      font-size: 10px;
+      line-height: 1.4;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .legend-swatch {
+      width: 16px;
+      height: 3px;
+      border-radius: 99px;
+      background: currentColor;
+    }
+
+    .assumptions {
+      display: grid;
+      gap: 6px;
+      padding: 16px;
+      color: var(--gray-500);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .assumptions p {
+      margin: 0;
+    }
+
+    .assumptions strong {
+      color: var(--gray-700);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (min-width: 640px) {
+      .site-header {
+        padding: 16px 24px;
+      }
+
+      .snapshot-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .milestones-mobile {
+        display: none;
+      }
+
+      .milestones-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .detail-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 24px;
+      }
+
+      .detail-value {
+        font-size: 30px;
+      }
+
+      .chart-box {
+        padding: 16px;
+      }
+
+      .chart-wrap {
+        height: 400px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .layout {
+        flex-direction: row;
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+
+      .sidebar {
+        width: 320px;
+      }
+
+      .snapshot-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .milestones-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 1280px) {
+      .milestones-grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <h1>When might I be able to <span>FIRE</span>?</h1>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <section class="panel" aria-labelledby="details-title">
+        <h2 id="details-title">Your Details</h2>
+
+        <div class="field" data-field="currentAge">
+          <label for="currentAge">Current Age</label>
+          <div class="input-wrap">
+            <input id="currentAge" type="text" inputmode="decimal" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="field" data-field="currentInvestments">
+          <label for="currentInvestments">Current Investments</label>
+          <div class="input-wrap">
+            <span class="affix">$</span>
+            <input id="currentInvestments" type="text" inputmode="decimal" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="field" data-field="annualSpending">
+          <label for="annualSpending">Annual Spending</label>
+          <div class="input-wrap">
+            <span class="affix">$</span>
+            <input id="annualSpending" type="text" inputmode="decimal" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="field" data-field="spendingGrowthRate">
+          <label for="spendingGrowthRate">Real Spending Growth</label>
+          <div class="input-wrap">
+            <input id="spendingGrowthRate" type="text" inputmode="decimal" autocomplete="off">
+            <span class="affix">%</span>
+          </div>
+        </div>
+
+        <div class="field" data-field="annualInvesting">
+          <label for="annualInvesting">Annual Contribution to Investments</label>
+          <div class="input-wrap">
+            <span class="affix">$</span>
+            <input id="annualInvesting" type="text" inputmode="decimal" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Portfolio Growth Rate</label>
+          <div class="tier-row" id="growthTiers">
+            <button class="tier" type="button" data-rate="0.03">Conservative 3%</button>
+            <button class="tier" type="button" data-rate="0.06">Moderate 6%</button>
+            <button class="tier" type="button" data-rate="0.09">Aggressive 9%</button>
+            <button class="tier" type="button" data-custom="true">Custom</button>
+          </div>
+          <div class="input-wrap hidden" id="customGrowthWrap">
+            <input id="portfolioGrowthRate" type="text" inputmode="decimal" autocomplete="off">
+            <span class="affix">%</span>
+          </div>
+        </div>
+
+        <div class="field" data-field="inflationRate">
+          <label for="inflationRate">Inflation Rate</label>
+          <div class="input-wrap">
+            <input id="inflationRate" type="text" inputmode="decimal" autocomplete="off">
+            <span class="affix">%</span>
+          </div>
+        </div>
+
+        <div class="field" data-field="baristaIncome">
+          <label for="baristaIncome">Barista FIRE Part-Time Income</label>
+          <div class="input-wrap">
+            <span class="affix">$</span>
+            <input id="baristaIncome" type="text" inputmode="decimal" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="ss-box">
+          <label class="check-row">
+            <input id="socialSecurityEnabled" type="checkbox">
+            <span>Include Social Security</span>
+          </label>
+          <div id="ssFields" class="hidden stack" style="gap: 12px;">
+            <div class="field" data-field="socialSecurityAge">
+              <label for="socialSecurityAge">SS Start Age</label>
+              <div class="input-wrap">
+                <input id="socialSecurityAge" type="text" inputmode="decimal" autocomplete="off">
+              </div>
+            </div>
+            <div class="field" data-field="socialSecurityIncome">
+              <label for="socialSecurityIncome">Annual SS Benefit</label>
+              <div class="input-wrap">
+                <span class="affix">$</span>
+                <input id="socialSecurityIncome" type="text" inputmode="decimal" autocomplete="off">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </aside>
+
+    <main class="main">
+      <div class="stack">
+        <section>
+          <h2 class="section-title">Current Snapshot</h2>
+          <div class="snapshot-grid" id="snapshot"></div>
+        </section>
+
+        <section>
+          <h2 class="section-title">FIRE Milestones</h2>
+          <div class="milestones-mobile" id="milestonesMobile"></div>
+          <div class="milestones-grid" id="milestonesGrid"></div>
+        </section>
+
+        <section class="detail" id="detail"></section>
+
+        <section>
+          <h2 class="section-title">Portfolio Growth Projection</h2>
+          <div class="chart-box">
+            <div class="chart-wrap">
+              <canvas id="projectionChart" aria-label="Portfolio growth projection"></canvas>
+            </div>
+            <div class="legend" id="legend"></div>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="section-title">Assumptions</h2>
+          <div class="assumptions" id="assumptions"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const DEFAULT_INPUTS = {
+      currentAge: 30,
+      currentInvestments: 225000,
+      annualSpending: 70000,
+      spendingGrowthRate: 0,
+      annualInvesting: 42000,
+      portfolioGrowthRate: 0.07,
+      inflationRate: 0.03,
+      baristaIncome: 35000,
+      socialSecurityEnabled: false,
+      socialSecurityAge: 67,
+      socialSecurityIncome: 20000
+    };
+
+    const COLOR_BY_KEY = {
+      portfolioValue: "#2563eb",
+      baristaFireNumber: "#7c3aed",
+      fireNumber: "#059669",
+      chubbyFireNumber: "#d97706",
+      fatFireNumber: "#dc2626"
+    };
+
+    const SERIES = [
+      ["portfolioValue", "Portfolio value"],
+      ["baristaFireNumber", "Barista FIRE"],
+      ["fireNumber", "Full FIRE (25x)"],
+      ["chubbyFireNumber", "Chubby FIRE (33x)"],
+      ["fatFireNumber", "Fat FIRE (50x)"]
+    ];
+
+    const TIER_RATES = [0.03, 0.06, 0.09];
+    const moneyFields = new Set(["currentInvestments", "annualSpending", "annualInvesting", "baristaIncome", "socialSecurityIncome"]);
+    const percentFields = new Set(["spendingGrowthRate", "inflationRate", "portfolioGrowthRate"]);
+    let inputs = loadInputs();
+    let selectedMilestone = "full";
+    let currentResult = null;
+    let resizeRaf = 0;
+    let customGrowthMode = !TIER_RATES.some((rate) => rate === inputs.portfolioGrowthRate);
+    let chartHoverIndex = null;
+
+    function fmt(n) {
+      const abs = Math.abs(n);
+      const sign = n < 0 ? "-" : "";
+      if (abs >= 1000000) return `${sign}$${(abs / 1000000).toFixed(2)}M`;
+      if (abs >= 1000) return `${sign}$${(abs / 1000).toFixed(0)}k`;
+      return `${sign}$${abs.toFixed(0)}`;
+    }
+
+    function formatWithCommas(n) {
+      if (n === null || n === undefined || Number.isNaN(Number(n))) return "";
+      return Number(n).toLocaleString("en-US");
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function parseHashData() {
+      if (!window.location.hash.startsWith("#inputs=")) return null;
+      try {
+        return JSON.parse(atob(decodeURIComponent(window.location.hash.slice(8))));
+      } catch {
+        return null;
+      }
+    }
+
+    function loadInputs() {
+      const fromHash = parseHashData();
+      return { ...DEFAULT_INPUTS, ...(fromHash || {}) };
+    }
+
+    function portfolioAtYear(input, y) {
+      if (y === 0) return input.currentInvestments;
+      const g = input.portfolioGrowthRate;
+      const compounded = input.currentInvestments * Math.pow(1 + g, y);
+      const contributions = g > 0
+        ? input.annualInvesting * ((Math.pow(1 + g, y) - 1) / g)
+        : input.annualInvesting * y;
+      return compounded + contributions;
+    }
+
+    function totalSpendingGrowthRate(input) {
+      return (1 + input.inflationRate) * (1 + input.spendingGrowthRate) - 1;
+    }
+
+    function spendingAtYear(input, y) {
+      return input.annualSpending * Math.pow(1 + totalSpendingGrowthRate(input), y);
+    }
+
+    function socialSecurityIncomeAtYear(input, y) {
+      if (!input.socialSecurityEnabled) return 0;
+      return input.socialSecurityIncome * Math.pow(1 + input.inflationRate, y);
+    }
+
+    function netSpendingAtYear(input, y) {
+      const age = input.currentAge + y;
+      const spending = spendingAtYear(input, y);
+      const ssIncome = socialSecurityIncomeAtYear(input, y);
+      if (age >= input.socialSecurityAge && ssIncome > 0) {
+        return Math.max(spending - ssIncome, 0);
+      }
+      return spending;
+    }
+
+    function fireNumberAtYear(input, y, multiplier) {
+      return netSpendingAtYear(input, y) * multiplier;
+    }
+
+    function findCrossoverYear(input, multiplier) {
+      for (let y = 0; y <= 60; y += 1) {
+        if (portfolioAtYear(input, y) >= fireNumberAtYear(input, y, multiplier)) return y;
+      }
+      return null;
+    }
+
+    function findCoastFireYear(input, targetAge) {
+      const g = input.portfolioGrowthRate;
+      for (let y = 0; y <= 60; y += 1) {
+        const age = input.currentAge + y;
+        if (age >= targetAge) {
+          return portfolioAtYear(input, y) >= fireNumberAtYear(input, y, 25) ? y : null;
+        }
+        const yearsToTarget = targetAge - age;
+        const currentPortfolio = portfolioAtYear(input, y);
+        const projectedAtTarget = currentPortfolio * Math.pow(1 + g, yearsToTarget);
+        const targetFireNumber = fireNumberAtYear(input, y + yearsToTarget, 25);
+        if (projectedAtTarget >= targetFireNumber) return y;
+      }
+      return null;
+    }
+
+    function findBaristaFireYear(input) {
+      for (let y = 0; y <= 60; y += 1) {
+        const gap = netSpendingAtYear(input, y) - input.baristaIncome;
+        if (gap <= 0) return y;
+        if (portfolioAtYear(input, y) >= gap * 25) return y;
+      }
+      return null;
+    }
+
+    function buildMilestone(input, type, label, description, formula, color, yearsAway, multiplier) {
+      if (yearsAway === null) {
+        return {
+          type,
+          label,
+          year: null,
+          age: null,
+          yearsAway: null,
+          targetNumber: null,
+          projectedPortfolio: null,
+          description,
+          formula,
+          color
+        };
+      }
+      return {
+        type,
+        label,
+        year: new Date().getFullYear() + yearsAway,
+        age: input.currentAge + yearsAway,
+        yearsAway,
+        targetNumber: multiplier ? fireNumberAtYear(input, yearsAway, multiplier) : null,
+        projectedPortfolio: portfolioAtYear(input, yearsAway),
+        description,
+        formula,
+        color
+      };
+    }
+
+    function calculateMilestones(input) {
+      const growthPct = (input.portfolioGrowthRate * 100).toFixed(0);
+      const spendGrowthPct = (totalSpendingGrowthRate(input) * 100).toFixed(1);
+      const ssNote = input.socialSecurityEnabled
+        ? ` Social Security (${fmt(input.socialSecurityIncome)}/yr in today's dollars, inflation-adjusted) reduces spending need after age ${input.socialSecurityAge}.`
+        : "";
+
+      return [
+        buildMilestone(
+          input,
+          "coast65",
+          "Coast FIRE · 65",
+          "Stop investing, retire at 65",
+          `${fmt(input.currentInvestments)} invested already grows to FIRE number by age 65 at ${growthPct}% - you can stop all contributions and still retire.${ssNote}`,
+          "#22c55e",
+          findCoastFireYear(input, 65),
+          25
+        ),
+        buildMilestone(
+          input,
+          "coast55",
+          "Coast FIRE · 55",
+          "Stop investing, retire at 55",
+          `${fmt(input.currentInvestments)} invested already grows to FIRE number by age 55 at ${growthPct}% - you can stop all contributions and still retire.${ssNote}`,
+          "#eab308",
+          findCoastFireYear(input, 55),
+          25
+        ),
+        buildMilestone(
+          input,
+          "barista",
+          "Barista FIRE",
+          "Part-time covers gap",
+          `Portfolio hits (spending - ${fmt(input.baristaIncome)} part-time income) x 25. A part-time job covers the gap - full-time work is optional.${ssNote}`,
+          "#a855f7",
+          findBaristaFireYear(input)
+        ),
+        buildMilestone(
+          input,
+          "full",
+          "Full FIRE",
+          "Never work again",
+          `Portfolio reaches spending x 25 (the 4% rule). Spending grows at ${spendGrowthPct}%/yr, portfolio compounds at ${growthPct}%.${ssNote}`,
+          "#ec4899",
+          findCrossoverYear(input, 25),
+          25
+        ),
+        buildMilestone(
+          input,
+          "chubby",
+          "Chubby FIRE",
+          "Comfortable margin",
+          `Portfolio reaches spending x 33 (~3% withdrawal rate). Provides a comfortable safety margin beyond basic FIRE.${ssNote}`,
+          "#f97316",
+          findCrossoverYear(input, 33),
+          33
+        ),
+        buildMilestone(
+          input,
+          "fat",
+          "Fat FIRE",
+          "Luxurious lifestyle",
+          `Portfolio reaches spending x 50 (2% withdrawal rate). Supports a luxurious lifestyle with very conservative drawdown.${ssNote}`,
+          "#ef4444",
+          findCrossoverYear(input, 50),
+          50
+        )
+      ];
+    }
+
+    function buildProjection(input, latestFireYear) {
+      const maxYears = Math.max(latestFireYear + 5, 30);
+      const currentYear = new Date().getFullYear();
+      const rows = [];
+      for (let y = 0; y <= maxYears; y += 1) {
+        const age = input.currentAge + y;
+        const netSpending = netSpendingAtYear(input, y);
+        const baristaGap = Math.max(netSpending - input.baristaIncome, 0);
+        rows.push({
+          year: currentYear + y,
+          age,
+          portfolioValue: Math.round(portfolioAtYear(input, y)),
+          fireNumber: Math.round(netSpending * 25),
+          baristaFireNumber: Math.round(baristaGap * 25),
+          chubbyFireNumber: Math.round(netSpending * 33),
+          fatFireNumber: Math.round(netSpending * 50)
+        });
+      }
+      return rows;
+    }
+
+    function calculate(input) {
+      const milestones = calculateMilestones(input);
+      const fireYears = milestones.map((m) => m.yearsAway).filter((y) => y !== null);
+      const latestFireYear = fireYears.length ? Math.max(...fireYears) : 30;
+      const projection = buildProjection(input, latestFireYear);
+      const growthPct = (input.portfolioGrowthRate * 100).toFixed(0);
+      const inflationPct = (input.inflationRate * 100).toFixed(1);
+      const realSpendingGrowthPct = (input.spendingGrowthRate * 100).toFixed(1);
+      const spendingGrowthPct = (totalSpendingGrowthRate(input) * 100).toFixed(1);
+      return {
+        snapshot: {
+          currentInvestments: input.currentInvestments,
+          annualSpending: input.annualSpending,
+          annualInvesting: input.annualInvesting,
+          baristaIncome: input.baristaIncome
+        },
+        milestones,
+        projection,
+        assumptions: {
+          spending: `${fmt(input.annualSpending)}/yr (${new Date().getFullYear()} actual average), growing ${spendingGrowthPct}%/yr nominal (${inflationPct}% inflation + ${realSpendingGrowthPct}% real spending growth)`,
+          contributions: `${fmt(input.annualInvesting)}/yr total, assumed to continue every projected year until the displayed target year`,
+          returnRate: `${growthPct}% nominal return`,
+          startingPortfolio: `${fmt(input.currentInvestments)} invested portfolio compounding at ${growthPct}%`,
+          horizon: `Chart runs through ${projection[projection.length - 1].year} (5 years beyond the latest projected FIRE milestone, with a 30-year minimum view).`
+        }
+      };
+    }
+
+    function setInputText(id, value) {
+      const el = document.getElementById(id);
+      if (!el || document.activeElement === el) return;
+      const displayValue = percentFields.has(id) ? (value * 100).toFixed(id === "portfolioGrowthRate" ? 1 : 0) : formatWithCommas(value);
+      el.value = displayValue;
+    }
+
+    function syncControls() {
+      Object.keys(DEFAULT_INPUTS).forEach((key) => {
+        if (typeof inputs[key] === "boolean") return;
+        setInputText(key, inputs[key]);
+      });
+      document.getElementById("socialSecurityEnabled").checked = inputs.socialSecurityEnabled;
+      document.getElementById("ssFields").classList.toggle("hidden", !inputs.socialSecurityEnabled);
+
+      document.getElementById("customGrowthWrap").classList.toggle("hidden", !customGrowthMode);
+      document.querySelectorAll("#growthTiers .tier").forEach((button) => {
+        const isSelected = button.dataset.custom ? customGrowthMode : !customGrowthMode && Number(button.dataset.rate) === inputs.portfolioGrowthRate;
+        button.classList.toggle("selected", isSelected);
+      });
+    }
+
+    function renderSnapshot(snapshot) {
+      const rows = [
+        ["Investments", fmt(snapshot.currentInvestments)],
+        ["Annual spending", fmt(snapshot.annualSpending)],
+        ["Annual Contribution", fmt(snapshot.annualInvesting)],
+        ["Barista Income", fmt(snapshot.baristaIncome)]
+      ];
+      document.getElementById("snapshot").innerHTML = rows.map(([label, value]) => `
+        <div class="card">
+          <p class="stat-label">${escapeHtml(label)}</p>
+          <p class="stat-value">${escapeHtml(value)}</p>
+        </div>
+      `).join("");
+    }
+
+    function isCoastMilestone(milestone) {
+      return milestone.type === "coast65" || milestone.type === "coast55";
+    }
+
+    function unreachableMilestoneCopy(milestone) {
+      if (isCoastMilestone(milestone)) {
+        return "This milestone is not reached with the current inputs. Increase savings, lower spending, or use a higher return assumption to get back on track.";
+      }
+      return "This milestone is not reached with the current inputs. Increase contributions, lower spending, or adjust assumptions to get back on track.";
+    }
+
+    function milestoneMarkup(m) {
+      const isNow = m.yearsAway === 0;
+      const unreachable = m.year === null;
+      const coast = isCoastMilestone(m);
+      let body = "";
+      if (unreachable) {
+        body = `<p class="milestone-year na">Off track</p><p class="milestone-formula off-track-copy">${escapeHtml(unreachableMilestoneCopy(m))}</p>`;
+      } else if (isNow) {
+        const subcopy = coast ? `Age ${m.age} · can coast now` : `Age ${m.age} · 0 years`;
+        body = `<p class="milestone-year now">~${m.year}</p><p class="milestone-age">${subcopy}</p>`;
+      } else {
+        const subcopy = coast
+          ? `Age ${m.age} · can coast in ${m.yearsAway} years`
+          : `Age ${m.age} · ${m.yearsAway} years away`;
+        body = `<p class="milestone-year">~${m.year}</p><p class="milestone-age">${subcopy}</p>`;
+      }
+      return `
+        <button class="milestone-card ${m.type === selectedMilestone ? "selected" : ""}" type="button" data-type="${escapeHtml(m.type)}">
+          <div class="milestone-head">
+            <span class="dot" style="background:${escapeHtml(m.color)}"></span>
+            <span class="milestone-label">${escapeHtml(m.label)}</span>
+          </div>
+          <p class="milestone-desc">${escapeHtml(m.description)}</p>
+          ${body}
+          ${unreachable ? "" : `<p class="milestone-formula">${escapeHtml(m.formula)}</p>`}
+        </button>
+      `;
+    }
+
+    function renderMilestones(milestones) {
+      const markup = milestones.map(milestoneMarkup).join("");
+      document.getElementById("milestonesMobile").innerHTML = markup;
+      document.getElementById("milestonesGrid").innerHTML = markup;
+      document.querySelectorAll(".milestone-card").forEach((button) => {
+        button.addEventListener("click", () => {
+          selectedMilestone = button.dataset.type;
+          render();
+        });
+      });
+      const mobileSelected = document.querySelector("#milestonesMobile .milestone-card.selected");
+      if (mobileSelected) {
+        mobileSelected.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      }
+    }
+
+    function renderDetail(milestone) {
+      const detail = document.getElementById("detail");
+      if (!milestone || milestone.year === null) {
+        detail.innerHTML = `
+          <div class="detail-head">
+            <span class="dot" style="background:${escapeHtml(milestone.color)}"></span>
+            <h2>${escapeHtml(milestone.label)} Details</h2>
+          </div>
+          <p class="detail-copy">This milestone is not reached within the current projection window.</p>
+          <p class="detail-subcopy">${escapeHtml(unreachableMilestoneCopy(milestone))}</p>
+        `;
+        return;
+      }
+
+      const coast = isCoastMilestone(milestone);
+      const timingLabel = coast ? "Coast year" : "Target year";
+      const timingSubcopy = coast
+        ? `Age ${milestone.age} · ${milestone.yearsAway === 0 ? "can coast now" : `can coast in ${milestone.yearsAway} years`}`
+        : `Age ${milestone.age} · ${milestone.yearsAway} years away`;
+
+      detail.innerHTML = `
+        <div class="detail-head">
+          <span class="dot" style="background:${escapeHtml(milestone.color)}"></span>
+          <h2>${escapeHtml(milestone.label)} Details</h2>
+        </div>
+        <p class="detail-copy">${escapeHtml(milestone.formula)}</p>
+        <div class="detail-grid">
+          <div>
+            <p class="detail-kicker">${timingLabel}</p>
+            <p class="detail-value">${milestone.year}</p>
+            <p class="detail-subcopy">${timingSubcopy}</p>
+          </div>
+          ${milestone.targetNumber !== null ? `
+          <div>
+            <p class="detail-kicker">FIRE number (inflation-adjusted)</p>
+            <p class="detail-value">~${fmt(milestone.targetNumber)}</p>
+          </div>` : ""}
+          ${milestone.projectedPortfolio !== null ? `
+          <div>
+            <p class="detail-kicker">Projected portfolio at FIRE</p>
+            <p class="detail-value">~${fmt(milestone.projectedPortfolio)}</p>
+          </div>` : ""}
+        </div>
+      `;
+    }
+
+    function renderAssumptions(assumptions) {
+      document.getElementById("assumptions").innerHTML = `
+        <p><strong>Spending:</strong> ${escapeHtml(assumptions.spending)}</p>
+        <p><strong>Contributions:</strong> ${escapeHtml(assumptions.contributions)}</p>
+        <p><strong>Return:</strong> ${escapeHtml(assumptions.returnRate)}</p>
+        <p><strong>Starting portfolio:</strong> ${escapeHtml(assumptions.startingPortfolio)}</p>
+        <p><strong>Chart horizon:</strong> ${escapeHtml(assumptions.horizon)}</p>
+      `;
+    }
+
+    function drawChart(projection) {
+      const canvas = document.getElementById("projectionChart");
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = Math.max(1, Math.floor(rect.width * ratio));
+      canvas.height = Math.max(1, Math.floor(rect.height * ratio));
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ctx.clearRect(0, 0, rect.width, rect.height);
+
+      const width = rect.width;
+      const height = rect.height;
+      const padding = { top: 8, right: 34, bottom: 30, left: 72 };
+      const plotW = width - padding.left - padding.right;
+      const plotH = height - padding.top - padding.bottom;
+      const allValues = projection.flatMap((row) => SERIES.map(([key]) => row[key]));
+      const maxValue = Math.max(...allValues, 1);
+      const minYear = projection[0].year;
+      const maxYear = projection[projection.length - 1].year;
+      const yMax = Math.ceil(maxValue / 250000) * 250000;
+
+      const x = (year) => padding.left + ((year - minYear) / Math.max(1, maxYear - minYear)) * plotW;
+      const y = (value) => padding.top + plotH - (value / yMax) * plotH;
+
+      ctx.font = "11px -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif";
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "#273244";
+      ctx.fillStyle = "#9ca3af";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+
+      for (let i = 0; i <= 5; i += 1) {
+        const value = (yMax / 5) * i;
+        const yy = y(value);
+        ctx.beginPath();
+        ctx.moveTo(padding.left, yy);
+        ctx.lineTo(width - padding.right, yy);
+        ctx.stroke();
+        ctx.fillText(fmt(value), padding.left - 8, yy);
+      }
+
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      const xTicks = 5;
+      for (let i = 0; i <= xTicks; i += 1) {
+        const year = Math.round(minYear + ((maxYear - minYear) / xTicks) * i);
+        ctx.fillText(String(year), x(year), height - padding.bottom + 10);
+      }
+
+      SERIES.forEach(([key], seriesIndex) => {
+        ctx.beginPath();
+        ctx.strokeStyle = COLOR_BY_KEY[key];
+        ctx.globalAlpha = key === "portfolioValue" ? 1 : 0.62;
+        ctx.lineWidth = key === "portfolioValue" ? 2.5 : 1.25;
+        ctx.setLineDash(key === "portfolioValue" ? [] : [5, 5]);
+        projection.forEach((row, index) => {
+          const xx = x(row.year);
+          const yy = y(row[key]);
+          if (index === 0) ctx.moveTo(xx, yy);
+          else ctx.lineTo(xx, yy);
+        });
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+
+        if (seriesIndex === 0) {
+          ctx.lineTo(x(projection[projection.length - 1].year), y(0));
+          ctx.lineTo(x(projection[0].year), y(0));
+          ctx.closePath();
+          ctx.globalAlpha = 0.1;
+          ctx.fillStyle = COLOR_BY_KEY[key];
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        }
+      });
+      ctx.setLineDash([]);
+
+      const thresholdMarkers = [
+        {
+          label: "First $1M",
+          color: "#facc15",
+          row: projection.find((row) => row.portfolioValue >= 1000000)
+        },
+        {
+          label: "Barista FIRE",
+          color: COLOR_BY_KEY.baristaFireNumber,
+          row: projection.find((row) => row.portfolioValue >= row.baristaFireNumber)
+        },
+        {
+          label: "Full FIRE",
+          color: COLOR_BY_KEY.fireNumber,
+          row: projection.find((row) => row.portfolioValue >= row.fireNumber)
+        },
+        {
+          label: "Chubby FIRE",
+          color: COLOR_BY_KEY.chubbyFireNumber,
+          row: projection.find((row) => row.portfolioValue >= row.chubbyFireNumber)
+        },
+        {
+          label: "Fat FIRE",
+          color: COLOR_BY_KEY.fatFireNumber,
+          row: projection.find((row) => row.portfolioValue >= row.fatFireNumber)
+        }
+      ].filter((marker) => marker.row);
+
+      thresholdMarkers.forEach((marker, index) => {
+        const markerX = x(marker.row.year);
+        ctx.strokeStyle = marker.color;
+        ctx.globalAlpha = 0.58;
+        ctx.lineWidth = 1.25;
+        ctx.setLineDash([]);
+        ctx.beginPath();
+        ctx.moveTo(markerX, padding.top);
+        ctx.lineTo(markerX, padding.top + plotH);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+
+        const label = `${marker.label} · ~${marker.row.year}`;
+        ctx.font = "12px -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif";
+        const labelWidth = ctx.measureText(label).width + 18;
+        const labelX = Math.min(Math.max(padding.left, markerX - labelWidth / 2), width - padding.right - labelWidth);
+        const markerLabelBaseY = padding.top + Math.min(120, plotH - 32);
+        const labelY = Math.max(padding.top + 8, markerLabelBaseY - index * 28);
+        ctx.fillStyle = "rgba(15, 23, 42, 0.82)";
+        ctx.strokeStyle = marker.color;
+        ctx.globalAlpha = 0.72;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(labelX, labelY, labelWidth, 24, 8);
+        ctx.fill();
+        ctx.stroke();
+        ctx.globalAlpha = 0.88;
+        ctx.fillStyle = marker.color;
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        ctx.fillText(label, labelX + 9, labelY + 12);
+        ctx.globalAlpha = 1;
+      });
+
+      if (chartHoverIndex !== null && projection[chartHoverIndex]) {
+        const hoverRow = projection[chartHoverIndex];
+        const hoverX = x(hoverRow.year);
+        ctx.strokeStyle = "#cbd5e1";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 4]);
+        ctx.beginPath();
+        ctx.moveTo(hoverX, padding.top);
+        ctx.lineTo(hoverX, padding.top + plotH);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        SERIES.forEach(([key]) => {
+          const pointY = y(hoverRow[key]);
+          ctx.beginPath();
+          ctx.fillStyle = COLOR_BY_KEY[key];
+          ctx.arc(hoverX, pointY, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = "#0f172a";
+          ctx.stroke();
+        });
+
+        const tooltipLines = [
+          `Year ${hoverRow.year} · Age ${hoverRow.age}`,
+          ...SERIES.map(([key, label]) => `${label}: ${fmt(hoverRow[key])}`),
+        ];
+        ctx.font = "12px -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif";
+        const lineHeight = 17;
+        const tooltipWidth = Math.max(...tooltipLines.map((line) => ctx.measureText(line).width)) + 24;
+        const tooltipHeight = tooltipLines.length * lineHeight + 18;
+        const tooltipX = hoverX + tooltipWidth + 16 > width
+          ? Math.max(padding.left, hoverX - tooltipWidth - 14)
+          : hoverX + 14;
+        const tooltipY = Math.max(padding.top + 6, Math.min(padding.top + plotH - tooltipHeight - 6, padding.top + 12));
+
+        ctx.fillStyle = "rgba(15, 23, 42, 0.96)";
+        ctx.strokeStyle = "#334155";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.textAlign = "left";
+        ctx.textBaseline = "top";
+        tooltipLines.forEach((line, index) => {
+          ctx.fillStyle = index === 0 ? "#f8fafc" : "#cbd5e1";
+          ctx.fillText(line, tooltipX + 12, tooltipY + 12 + index * lineHeight);
+        });
+      }
+    }
+
+    function updateChartHover(event) {
+      if (!currentResult?.projection?.length) return;
+      const canvas = document.getElementById("projectionChart");
+      const rect = canvas.getBoundingClientRect();
+      const padding = { left: 72, right: 34 };
+      const plotW = rect.width - padding.left - padding.right;
+      const pointerX = event.clientX - rect.left;
+      if (pointerX < padding.left || pointerX > rect.width - padding.right) {
+        chartHoverIndex = null;
+        canvas.removeAttribute("data-hover-year");
+        drawChart(currentResult.projection);
+        return;
+      }
+      const index = Math.round(((pointerX - padding.left) / plotW) * (currentResult.projection.length - 1));
+      chartHoverIndex = Math.max(0, Math.min(currentResult.projection.length - 1, index));
+      canvas.dataset.hoverYear = String(currentResult.projection[chartHoverIndex].year);
+      drawChart(currentResult.projection);
+    }
+
+    function clearChartHover() {
+      if (chartHoverIndex === null) return;
+      document.getElementById("projectionChart").removeAttribute("data-hover-year");
+      chartHoverIndex = null;
+      if (currentResult) drawChart(currentResult.projection);
+    }
+
+    function renderLegend() {
+      document.getElementById("legend").innerHTML = SERIES.map(([key, label]) => `
+        <span class="legend-item" style="color:${COLOR_BY_KEY[key]}">
+          <span class="legend-swatch"></span>
+          <span style="color:#4b5563">${escapeHtml(label)}</span>
+        </span>
+      `).join("");
+    }
+
+    function render() {
+      syncControls();
+      currentResult = calculate(inputs);
+      if (!currentResult.milestones.some((m) => m.type === selectedMilestone)) {
+        selectedMilestone = "full";
+      }
+      const selected = currentResult.milestones.find((m) => m.type === selectedMilestone) || currentResult.milestones[3];
+      renderSnapshot(currentResult.snapshot);
+      renderMilestones(currentResult.milestones);
+      renderDetail(selected);
+      renderAssumptions(currentResult.assumptions);
+      drawChart(currentResult.projection);
+      renderLegend();
+    }
+
+    function commitTextField(id) {
+      const el = document.getElementById(id);
+      const raw = el.value.replaceAll(",", "");
+      const parsed = Number.parseFloat(raw);
+      inputs[id] = Number.isNaN(parsed) ? 0 : (percentFields.has(id) ? parsed / 100 : parsed);
+      render();
+    }
+
+    function bindTextField(id) {
+      const el = document.getElementById(id);
+      el.addEventListener("focus", () => {
+        const value = percentFields.has(id) ? inputs[id] * 100 : inputs[id];
+        el.value = value === 0 ? "" : String(Number(value.toFixed ? value.toFixed(1) : value));
+      });
+      el.addEventListener("blur", () => commitTextField(id));
+      el.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") el.blur();
+      });
+    }
+
+    Object.keys(DEFAULT_INPUTS)
+      .filter((key) => key !== "socialSecurityEnabled")
+      .forEach(bindTextField);
+
+    document.getElementById("socialSecurityEnabled").addEventListener("change", (event) => {
+      inputs.socialSecurityEnabled = event.currentTarget.checked;
+      render();
+    });
+
+    document.querySelectorAll("#growthTiers .tier").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (button.dataset.custom) {
+          customGrowthMode = true;
+          syncControls();
+          document.getElementById("portfolioGrowthRate").focus();
+          return;
+        }
+        customGrowthMode = false;
+        inputs.portfolioGrowthRate = Number(button.dataset.rate);
+        render();
+      });
+    });
+
+    const chartCanvas = document.getElementById("projectionChart");
+    chartCanvas.addEventListener("mousemove", updateChartHover);
+    chartCanvas.addEventListener("mouseleave", clearChartHover);
+    chartCanvas.addEventListener("touchmove", (event) => {
+      if (!event.touches.length) return;
+      updateChartHover(event.touches[0]);
+    }, { passive: true });
+    chartCanvas.addEventListener("touchend", clearChartHover);
+
+    window.addEventListener("resize", () => {
+      if (resizeRaf) window.cancelAnimationFrame(resizeRaf);
+      resizeRaf = window.requestAnimationFrame(() => {
+        if (currentResult) drawChart(currentResult.projection);
+      });
+    });
+
+    window.addEventListener("hashchange", () => {
+      inputs = loadInputs();
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
