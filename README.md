@@ -13,7 +13,7 @@ All data stays local and does not leave your browser.
 - How inflation, annual contributions, and portfolio growth affect the timeline.
 - A portfolio projection chart with key milestone markers.
 
-**The numbers are estimates, not financial advice.** Small changes to return, inflation, spending, or contributions can move the results by years.
+<ins>The numbers are estimates, not financial advice.</ins> Small changes to return, inflation, spending, or contributions can move the results by years.
 
 ## Main Assumptions
 
@@ -25,11 +25,6 @@ All data stays local and does not leave your browser.
   - Chubby FIRE: `33x` annual spending
   - Fat FIRE: `50x` annual spending
   - Barista FIRE: `25x` the gap after part-time income
-
-## Files
-
-- `index.html` - the complete app
-- `README.md` - this file
 
 ## Contributors
 
