@@ -2,6 +2,8 @@
 
 A simple, standalone calculator for exploring when you might be able to reach different FIRE milestones.
 
+![FIRE Calculator dashboard](dashboard.png)
+
 ## What It Shows
 
 - When your investments may reach Barista, Full, Chubby, and Fat FIRE.
@@ -29,4 +31,4 @@ The numbers are estimates, not financial advice. Small changes to return, inflat
 
 ## Contributors
 
-- `u/Master_Course_1879` - original inspiration
+- `vwmj` - original inspiration
