@@ -4,6 +4,39 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>When might you be able to FIRE?</title>
+  <meta name="google-analytics-id" content="G-CMDW3H93ZF">
+  <script>
+    (() => {
+      const measurementId = document.querySelector('meta[name="google-analytics-id"]')?.content.trim();
+      if (!measurementId) return;
+
+      if (!/^G-[A-Z0-9]+$/i.test(measurementId)) {
+        console.warn("Invalid Google Analytics measurement ID. Expected a GA4 ID like G-XXXXXXXXXX.");
+        return;
+      }
+
+      const safePath = `${window.location.pathname}${window.location.search}`;
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function gtag() {
+        window.dataLayer.push(arguments);
+      };
+
+      window.gtag("js", new Date());
+      window.gtag("config", measurementId, {
+        page_location: `${window.location.origin}${safePath}`,
+        page_path: safePath,
+        page_title: document.title,
+        send_page_view: true,
+        allow_google_signals: false,
+        allow_ad_personalization_signals: false
+      });
+
+      const script = document.createElement("script");
+      script.async = true;
+      script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
+      document.head.appendChild(script);
+    })();
+  </script>
   <style>
     :root {
       --gray-50: #0f172a;
@@ -797,6 +830,11 @@
     let chartHoverIndex = null;
     let chartHighlightKey = null;
 
+    function trackAnalyticsEvent(name, params = {}) {
+      if (typeof window.gtag !== "function") return;
+      window.gtag("event", name, params);
+    }
+
     function fmt(n) {
       const abs = Math.abs(n);
       const sign = n < 0 ? "-" : "";
@@ -1142,6 +1180,7 @@
       document.querySelectorAll(".milestone-card").forEach((button) => {
         button.addEventListener("click", () => {
           selectedMilestone = button.dataset.type;
+          trackAnalyticsEvent("milestone_selected", { milestone_type: selectedMilestone });
           render();
         });
       });
@@ -1466,6 +1505,7 @@
       const raw = el.value.replaceAll(",", "");
       const parsed = Number.parseFloat(raw);
       inputs[id] = Number.isNaN(parsed) ? 0 : (percentFields.has(id) ? parsed / 100 : parsed);
+      trackAnalyticsEvent("calculator_input_updated", { field_name: id });
       render();
     }
 
@@ -1487,6 +1527,7 @@
 
     document.getElementById("socialSecurityEnabled").addEventListener("change", (event) => {
       inputs.socialSecurityEnabled = event.currentTarget.checked;
+      trackAnalyticsEvent("calculator_input_updated", { field_name: "socialSecurityEnabled" });
       render();
     });
 
@@ -1500,6 +1541,7 @@
         }
         customGrowthMode = false;
         inputs.portfolioGrowthRate = Number(button.dataset.rate);
+        trackAnalyticsEvent("calculator_input_updated", { field_name: "portfolioGrowthRate" });
         render();
       });
     });

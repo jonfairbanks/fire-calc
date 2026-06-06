@@ -2,7 +2,7 @@
 
 A simple, standalone calculator for exploring when you might be able to reach different FIRE milestones.
 
-All data stays local and does not leave your browser.
+By default, all data stays local and does not leave your browser.
 
 ![FIRE Calculator dashboard](dashboard.png)
 
@@ -26,6 +26,20 @@ All data stays local and does not leave your browser.
   - Fat FIRE: `50x` annual spending
   - Barista FIRE: `25x` the gap after part-time income
 
+## Google Analytics
+
+Google Analytics is configured through the GA4 measurement ID in `index.html`:
+
+```html
+<meta name="google-analytics-id" content="G-XXXXXXXXXX">
+```
+
+The integration avoids sending calculator values or shareable hash input data. It only sends a sanitized page view plus interaction events for updated field names and selected milestone types.
+
 ## Contributors
 
 - `vwmj` - original inspiration
+
+---
+
+Google Analytics may be used to understand aggregate usage patterns. User-provided calculator data is not shared and does not leave the tool.
