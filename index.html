@@ -875,7 +875,7 @@
       if (y === 0) return input.currentInvestments;
       const g = input.portfolioGrowthRate;
       const compounded = input.currentInvestments * Math.pow(1 + g, y);
-      const contributions = g > 0
+      const contributions = g !== 0
         ? input.annualInvesting * ((Math.pow(1 + g, y) - 1) / g)
         : input.annualInvesting * y;
       return compounded + contributions;
@@ -892,6 +892,10 @@
     function socialSecurityIncomeAtYear(input, y) {
       if (!input.socialSecurityEnabled) return 0;
       return input.socialSecurityIncome * Math.pow(1 + input.inflationRate, y);
+    }
+
+    function baristaIncomeAtYear(input, y) {
+      return input.baristaIncome * Math.pow(1 + input.inflationRate, y);
     }
 
     function netSpendingAtYear(input, y) {
@@ -933,7 +937,7 @@
 
     function findBaristaFireYear(input) {
       for (let y = 0; y <= 60; y += 1) {
-        const gap = netSpendingAtYear(input, y) - input.baristaIncome;
+        const gap = netSpendingAtYear(input, y) - baristaIncomeAtYear(input, y);
         if (gap <= 0) return y;
         if (portfolioAtYear(input, y) >= gap * 25) return y;
       }
@@ -1006,7 +1010,7 @@
           "barista",
           "Barista FIRE",
           "Part-time covers gap",
-          `Portfolio hits (spending - ${fmt(input.baristaIncome)} part-time income) x 25. A part-time job covers the gap - full-time work is optional.${ssNote}`,
+          `Portfolio hits (spending - ${fmt(input.baristaIncome)} part-time income, inflation-adjusted) x 25. A part-time job covers the gap - full-time work is optional.${ssNote}`,
           "#a855f7",
           findBaristaFireYear(input),
           null,
@@ -1055,7 +1059,7 @@
       for (let y = 0; y <= maxYears; y += 1) {
         const age = input.currentAge + y;
         const netSpending = netSpendingAtYear(input, y);
-        const baristaGap = Math.max(netSpending - input.baristaIncome, 0);
+        const baristaGap = Math.max(netSpending - baristaIncomeAtYear(input, y), 0);
         rows.push({
           year: currentYear + y,
           age,
