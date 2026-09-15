@@ -96,8 +96,8 @@ function approximately(actual, expected, tolerance = 1) {
 
 function referencePortfolio(input, year) {
   let portfolio = input.currentInvestments;
-  for (let elapsed = 0; elapsed < year; elapsed += 1) {
-    portfolio = portfolio * (1 + input.portfolioGrowthRate) + input.annualInvesting;
+  for (let elapsed = 0; elapsed < year * 12; elapsed += 1) {
+    portfolio = portfolio * Math.pow(1 + input.portfolioGrowthRate, 1 / 12) + input.monthlyInvesting;
   }
   return portfolio;
 }
@@ -142,24 +142,22 @@ function referenceCoastYear(input, targetAge) {
   return null;
 }
 
-test("portfolio accumulation follows the annual recurrence", () => {
+test("portfolio accumulation follows independent month-end deposits", () => {
   const calculator = makeCalculator();
   const scenarios = [
-    { portfolioGrowthRate: -0.1, annualInvesting: 0 },
-    { portfolioGrowthRate: 0, annualInvesting: 1_000 },
-    { portfolioGrowthRate: 0.07, annualInvesting: 42_000 }
+    { portfolioGrowthRate: -0.1, monthlyInvesting: 0 },
+    { portfolioGrowthRate: 0, monthlyInvesting: 1_000 },
+    { portfolioGrowthRate: 0.07, monthlyInvesting: 3_500 }
   ];
 
   for (const scenario of scenarios) {
     const input = calculator.run(`({ ...DEFAULT_INPUTS, ${Object.entries(scenario)
       .map(([key, value]) => `${key}: ${value}`)
       .join(", ")} })`);
-    let expected = input.currentInvestments;
-
     for (let year = 0; year <= 60; year += 1) {
       calculator.context.input = input;
-      approximately(calculator.run(`portfolioAtYear(input, ${year})`), expected, 1e-6);
-      expected = expected * (1 + input.portfolioGrowthRate) + input.annualInvesting;
+      const expected = referencePortfolio(input, year);
+      approximately(calculator.run(`portfolioAtYear(input, ${year})`), expected, Math.max(1e-6, expected * 1e-12));
     }
   }
 });
@@ -169,7 +167,7 @@ test("zero, -100%, and tiny positive returns stay mathematically stable", () => 
 
   calculator.context.input = {
     currentInvestments: 225_000,
-    annualInvesting: 42_000,
+    monthlyInvesting: 3_500,
     portfolioGrowthRate: 0,
     annualSpending: 70_000,
     spendingGrowthRate: 0,
@@ -183,8 +181,8 @@ test("zero, -100%, and tiny positive returns stay mathematically stable", () => 
 
   calculator.context.input = { ...calculator.context.input, currentInvestments: 100, portfolioGrowthRate: -1 };
   assert.equal(calculator.run("portfolioAtYear(input, 0)"), 100);
-  assert.equal(calculator.run("portfolioAtYear(input, 1)"), 42_000);
-  assert.equal(calculator.run("portfolioAtYear(input, 12)"), 42_000);
+  assert.equal(calculator.run("portfolioAtYear(input, 1)"), 3_500);
+  assert.equal(calculator.run("portfolioAtYear(input, 12)"), 3_500);
   assert.equal(calculator.run("findCrossoverYear(input, 25)"), null);
   assert.equal(calculator.run("findCoastFireYear(input, 55)"), null);
 
@@ -204,13 +202,15 @@ test("default Coast FIRE at 55 reports the stopping threshold and retirement tar
   const calculator = makeCalculator();
   const coast55 = milestone(calculator, "coast55");
 
-  assert.equal(coast55.age, 51);
-  assert.equal(coast55.yearsAway, 21);
+  const input = calculator.run("DEFAULT_INPUTS");
+  const expectedYear = referenceCoastYear(input, 55);
+  assert.equal(coast55.age, input.currentAge + expectedYear);
+  assert.equal(coast55.yearsAway, expectedYear);
   assert.equal(coast55.retirementAge, 55);
   assert.equal(coast55.targetNumber, coast55.coastTargetNumber);
-  approximately(coast55.coastTargetNumber, 2_795_333);
+  approximately(coast55.coastTargetNumber, referenceNetSpending(input, 25) * 25 / Math.pow(1.07, 25 - expectedYear));
   approximately(coast55.retirementTargetNumber, 3_664_111);
-  approximately(coast55.projectedPortfolio, 2_815_964);
+  approximately(coast55.projectedPortfolio, referencePortfolio(input, expectedYear));
   assert.ok(coast55.projectedPortfolio >= coast55.coastTargetNumber);
 });
 
@@ -250,7 +250,7 @@ test("Social Security starts at the selected age and only affects enabled scenar
     currentInvestments: 225_000,
     annualSpending: 70_000,
     spendingGrowthRate: 0,
-    annualInvesting: 42_000,
+    monthlyInvesting: 3_500,
     portfolioGrowthRate: 0.07,
     inflationRate: 0.03,
     baristaIncome: 35_000,
@@ -374,13 +374,13 @@ test("malformed and wrongly typed shared inputs keep defaults and show a warning
 
   const invalidTypes = makeCalculator(encodedHash({
     currentAge: null,
-    annualInvesting: "42000",
+    monthlyInvesting: "3500",
     socialSecurityEnabled: "true",
     socialSecurityAge: 61,
     portfolioGrowthRate: "0.06"
   }));
   assert.equal(invalidTypes.run("inputs.currentAge"), 30);
-  assert.equal(invalidTypes.run("inputs.annualInvesting"), 42_000);
+  assert.equal(invalidTypes.run("inputs.monthlyInvesting"), 3_500);
   assert.equal(invalidTypes.run("inputs.socialSecurityEnabled"), false);
   assert.equal(invalidTypes.run("inputs.socialSecurityAge"), 67);
   assert.equal(invalidTypes.run("inputs.portfolioGrowthRate"), 0.07);
@@ -395,4 +395,29 @@ test("loading shared values refreshes a focused field without stale displayed va
   field.value = "0";
   calculator.run("inputs.spendingGrowthRate = 0.004; syncControls(true)");
   assert.equal(field.value, "0.4");
+});
+
+test("monthly deposits earn returns before the year ends without changing the annual return", () => {
+  const calculator = makeCalculator();
+  calculator.context.annualReturn = Math.pow(1.01, 12) - 1;
+  approximately(calculator.run("portfolioAtYear({ ...DEFAULT_INPUTS, currentInvestments: 0, monthlyInvesting: 1000, portfolioGrowthRate: annualReturn }, 1)"), 12_682.503013197, 1e-6);
+  approximately(calculator.run("portfolioAtYear({ ...DEFAULT_INPUTS, currentInvestments: 1000, monthlyInvesting: 0, portfolioGrowthRate: annualReturn }, 1)"), 1_126.825030132, 1e-6);
+});
+
+test("legacy annual contribution links convert safely and explicit monthly values take precedence", () => {
+  const legacy = makeCalculator(encodedHash({ annualInvesting: 24_000 }));
+  assert.equal(legacy.run("inputs.monthlyInvesting"), 2_000);
+  assert.equal(legacy.run("Object.hasOwn(inputs, 'annualInvesting')"), false);
+  assert.equal(legacy.run("inputLoadWarning"), "");
+
+  for (const invalid of [-1, "24000", null, 1e13]) {
+    const calculator = makeCalculator(encodedHash({ annualInvesting: invalid }));
+    assert.equal(calculator.run("inputs.monthlyInvesting"), 3_500);
+    assert.match(calculator.run("inputLoadWarning"), /default values/i);
+  }
+  const both = makeCalculator(encodedHash({ monthlyInvesting: 0, annualInvesting: 24_000 }));
+  assert.equal(both.run("inputs.monthlyInvesting"), 0);
+  const invalidMonthly = makeCalculator(encodedHash({ monthlyInvesting: -1, annualInvesting: 24_000 }));
+  assert.equal(invalidMonthly.run("inputs.monthlyInvesting"), 3_500);
+  assert.match(invalidMonthly.run("inputLoadWarning"), /default values/i);
 });

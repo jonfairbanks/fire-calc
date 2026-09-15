@@ -10,15 +10,15 @@ By default, all data stays local and does not leave your browser.
 
 - When your investments may reach Barista, Full, Chubby, and Fat FIRE.
 - When you may be able to Coast FIRE.
-- How inflation, annual contributions, and portfolio growth affect the timeline.
+- How inflation, monthly contributions, and portfolio growth affect the timeline.
 - A portfolio projection chart with key milestone markers.
 
 <ins>The numbers are estimates, not financial advice.</ins> Small changes to return, inflation, spending, or contributions can move the results by years.
 
 ## Main Assumptions
 
-- Portfolio growth is a constant nominal annual return. Market volatility is not modeled.
-- Contributions are fixed nominal amounts added at each year end, and continue throughout the chart. Each milestone assumes contributions continue until its own date; later milestones do not describe what happens after choosing an earlier retirement date.
+- Portfolio growth is a constant nominal annual return. The equivalent monthly return is `(1 + annual return)^(1/12) - 1`; market volatility is not modeled.
+- Contributions are fixed nominal monthly amounts added at each month end, and continue throughout the chart. Each milestone assumes contributions continue until its own date; later milestones do not describe what happens after choosing an earlier retirement date.
 - Spending grows by `(1 + inflation) * (1 + real spending growth)` each year.
 - Part-time income and Social Security benefits are entered in today's dollars and grow with inflation. Social Security reduces the spending target starting at the selected claiming age; enter a benefit estimate appropriate to that age and your expected work history.
 - FIRE targets are based on spending multiples:
@@ -37,7 +37,7 @@ Part-time income has no modeled end date. Chubby and Fat FIRE use the same spend
 
 ## Input Validation
 
-Invalid entries show an error and leave results based on the last valid value. Fractional percentages remain visible when editing and after leaving a field. Shared input links accept only known fields with valid types and ranges; invalid shared values fall back to defaults with a notice.
+Invalid entries show an error and leave results based on the last valid value. Fractional percentages remain visible when editing and after leaving a field. Shared input links accept only known fields with valid types and ranges; invalid shared values fall back to defaults with a notice. Older links using `annualInvesting` are converted to monthly amounts by dividing by 12; an explicit `monthlyInvesting` value takes precedence. The default contribution is $3,500/month ($42,000/year).
 
 - Current age: whole years from 0 to 120.
 - Social Security claiming age: whole years from 62 to 70.

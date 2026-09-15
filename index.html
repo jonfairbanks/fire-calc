@@ -716,13 +716,13 @@
           <p class="field-error hidden" id="spendingGrowthRateError" aria-live="polite"></p>
         </div>
 
-        <div class="field" data-field="annualInvesting">
-          <label for="annualInvesting">Annual Contribution to Investments</label>
+        <div class="field" data-field="monthlyInvesting">
+          <label for="monthlyInvesting">Monthly Contribution to Investments</label>
           <div class="input-wrap">
             <span class="affix">$</span>
-            <input id="annualInvesting" type="text" inputmode="decimal" autocomplete="off" aria-describedby="annualInvestingError">
+            <input id="monthlyInvesting" type="text" inputmode="decimal" autocomplete="off" aria-describedby="monthlyInvestingError">
           </div>
-          <p class="field-error hidden" id="annualInvestingError" aria-live="polite"></p>
+          <p class="field-error hidden" id="monthlyInvestingError" aria-live="polite"></p>
         </div>
 
         <div class="field">
@@ -825,7 +825,7 @@
       currentInvestments: 225000,
       annualSpending: 70000,
       spendingGrowthRate: 0,
-      annualInvesting: 42000,
+      monthlyInvesting: 3500,
       portfolioGrowthRate: 0.07,
       inflationRate: 0.03,
       baristaIncome: 35000,
@@ -851,7 +851,7 @@
     ];
 
     const TIER_RATES = [0.03, 0.06, 0.09];
-    const moneyFields = new Set(["currentInvestments", "annualSpending", "annualInvesting", "baristaIncome", "socialSecurityIncome"]);
+    const moneyFields = new Set(["currentInvestments", "annualSpending", "monthlyInvesting", "baristaIncome", "socialSecurityIncome"]);
     const percentFields = new Set(["spendingGrowthRate", "inflationRate", "portfolioGrowthRate"]);
     let inputErrors = {};
     let inputLoadWarning = "";
@@ -938,6 +938,11 @@
       const fromHash = parseHashData();
       const loaded = { ...DEFAULT_INPUTS };
       if (!fromHash) return loaded;
+      // Older shared links stored an annual contribution. A monthly value takes precedence.
+      if (!Object.hasOwn(fromHash, "monthlyInvesting") && Object.hasOwn(fromHash, "annualInvesting")) {
+        fromHash.monthlyInvesting = validateInputValue("monthlyInvesting", fromHash.annualInvesting)
+          ? null : fromHash.annualInvesting / 12;
+      }
       for (const key of Object.keys(DEFAULT_INPUTS)) {
         if (!Object.hasOwn(fromHash, key)) continue;
         if (validateInputValue(key, fromHash[key])) {
@@ -955,9 +960,11 @@
       const exponent = y * Math.log1p(g);
       const growth = Math.expm1(exponent);
       const compounded = input.currentInvestments * Math.exp(exponent);
-      const contributions = g !== 0
-        ? input.annualInvesting * (growth / g)
-        : input.annualInvesting * y;
+      // Preserve the entered annual return while crediting deposits at each month end.
+      const monthlyRate = Math.expm1(Math.log1p(g) / 12);
+      const contributions = monthlyRate !== 0
+        ? input.monthlyInvesting * (growth / monthlyRate)
+        : input.monthlyInvesting * y * 12;
       return compounded + contributions;
     }
 
@@ -1080,7 +1087,7 @@
       milestone.targetNumber = milestone.coastTargetNumber;
       const timing = yearsAway === 0
         ? "Your current portfolio reaches the coast threshold now."
-        : `Continue contributing ${fmt(input.annualInvesting)}/yr through age ${milestone.age} (${milestone.year}), when your projected portfolio reaches ${fmt(milestone.projectedPortfolio)}.`;
+        : `Continue contributing $${formatWithCommas(input.monthlyInvesting)}/mo through age ${milestone.age} (${milestone.year}), when your projected portfolio reaches ${fmt(milestone.projectedPortfolio)}.`;
       milestone.formula = `${timing} With no further contributions or withdrawals after that point, it is projected to meet the ${fmt(milestone.retirementTargetNumber)} target at age ${targetAge}, assuming ${formatPercent(input.portfolioGrowthRate)}% nominal annual returns. Cover living costs from other income while coasting. This is a target estimate, not a test of retirement sustainability.`;
       milestone.shortFormula = `Reach the coast balance, then let it grow without contributions or withdrawals until age ${targetAge}.`;
       return milestone;
@@ -1177,14 +1184,14 @@
         snapshot: {
           currentInvestments: input.currentInvestments,
           annualSpending: input.annualSpending,
-          annualInvesting: input.annualInvesting,
+          monthlyInvesting: input.monthlyInvesting,
           baristaIncome: input.baristaIncome
         },
         milestones,
         projection,
         assumptions: {
           spending: `${fmt(input.annualSpending)}/yr in today's dollars, growing ${spendingGrowthPct}%/yr nominal (${inflationPct}% inflation compounded with ${realSpendingGrowthPct}% real spending growth).`,
-          contributions: `${fmt(input.annualInvesting)}/yr in fixed nominal dollars, added at each year end throughout the chart. Each milestone assumes contributions continue until its own date; later milestones do not follow an earlier retirement or coast decision.`,
+          contributions: `$${formatWithCommas(input.monthlyInvesting)}/mo in fixed nominal dollars, added at each month end throughout the chart. Each milestone assumes contributions continue until its own date; later milestones do not follow an earlier retirement or coast decision.`,
           returnRate: `${growthPct}% nominal return every year. Returns do not vary; market losses early in retirement and retirement duration are not modeled.`,
           startingPortfolio: `${fmt(input.currentInvestments)} invested portfolio compounding at ${growthPct}%`,
           horizon: `Milestones are checked once per year for up to 60 years, with Coast FIRE limited to its target age. Chart runs through ${projection[projection.length - 1].year} (at least 30 years). A missing milestone means it was not found within the search window.`,
@@ -1220,7 +1227,7 @@
       const rows = [
         ["Investments", fmt(snapshot.currentInvestments)],
         ["Spending", fmt(snapshot.annualSpending)],
-        ["Annual Contribution", fmt(snapshot.annualInvesting)],
+        ["Monthly Contribution", "$" + formatWithCommas(snapshot.monthlyInvesting)],
         ["Barista Income", fmt(snapshot.baristaIncome)]
       ];
       document.getElementById("snapshot").innerHTML = rows.map(([label, value]) => `
