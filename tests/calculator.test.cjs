@@ -82,8 +82,8 @@ function encodedHash(value) {
   return `#inputs=${encodeURIComponent(Buffer.from(JSON.stringify(value)).toString("base64"))}`;
 }
 
-function milestone(calculator, type) {
-  calculator.run("result = calculate(DEFAULT_INPUTS)");
+function milestone(calculator, type, input = "DEFAULT_INPUTS") {
+  calculator.run(`result = calculate(${input})`);
   return calculator.run(`result.milestones.find((item) => item.type === ${JSON.stringify(type)})`);
 }
 
@@ -198,11 +198,12 @@ test("zero, -100%, and tiny positive returns stay mathematically stable", () => 
   );
 });
 
-test("default Coast FIRE at 55 reports the stopping threshold and retirement target", () => {
+test("Coast FIRE at 55 with 7% returns reports the stopping threshold and retirement target", () => {
   const calculator = makeCalculator();
-  const coast55 = milestone(calculator, "coast55");
+  const scenario = "({ ...DEFAULT_INPUTS, portfolioGrowthRate: 0.07 })";
+  const coast55 = milestone(calculator, "coast55", scenario);
 
-  const input = calculator.run("DEFAULT_INPUTS");
+  const input = calculator.run(scenario);
   const expectedYear = referenceCoastYear(input, 55);
   assert.equal(coast55.age, input.currentAge + expectedYear);
   assert.equal(coast55.yearsAway, expectedYear);
@@ -383,7 +384,7 @@ test("malformed and wrongly typed shared inputs keep defaults and show a warning
   assert.equal(invalidTypes.run("inputs.monthlyInvesting"), 3_500);
   assert.equal(invalidTypes.run("inputs.socialSecurityEnabled"), false);
   assert.equal(invalidTypes.run("inputs.socialSecurityAge"), 67);
-  assert.equal(invalidTypes.run("inputs.portfolioGrowthRate"), 0.07);
+  assert.equal(invalidTypes.run("inputs.portfolioGrowthRate"), 0.06);
   assert.equal(invalidTypes.run("Object.keys(inputErrors).length"), 0);
   assert.match(invalidTypes.run("inputLoadWarning"), /default values/i);
 });

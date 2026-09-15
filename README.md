@@ -17,7 +17,7 @@ By default, all data stays local and does not leave your browser.
 
 ## Main Assumptions
 
-- Portfolio growth is a constant nominal annual return. The equivalent monthly return is `(1 + annual return)^(1/12) - 1`; market volatility is not modeled.
+- Portfolio growth defaults to Moderate (6%), a constant nominal annual return. The equivalent monthly return is `(1 + annual return)^(1/12) - 1`; market volatility is not modeled.
 - Contributions are fixed nominal monthly amounts added at each month end, and continue throughout the chart. Each milestone assumes contributions continue until its own date; later milestones do not describe what happens after choosing an earlier retirement date.
 - Spending grows by `(1 + inflation) * (1 + real spending growth)` each year.
 - Part-time income and Social Security benefits are entered in today's dollars and grow with inflation. Social Security reduces the spending target starting at the selected claiming age; enter a benefit estimate appropriate to that age and your expected work history.
