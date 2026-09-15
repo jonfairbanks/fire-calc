@@ -475,3 +475,45 @@ test("reached and inapplicable targets never show shortfalls", () => {
   assert.equal(calculator.run("buildShortfall({ ...DEFAULT_INPUTS, currentInvestments: 100 }, 0, 100)"), null);
   assert.equal(calculator.run("formatShortfall(-0.2)"), "Less than $1");
 });
+
+test("Coast and retirement in the same year are labeled without a separate coast period", () => {
+  const calculator = makeCalculator();
+  const coast = milestone(calculator, "coast55", "({ ...DEFAULT_INPUTS, currentAge: 37, currentInvestments: 585000 })");
+  const full = milestone(calculator, "full", "({ ...DEFAULT_INPUTS, currentAge: 37, currentInvestments: 585000 })");
+  assert.equal(coast.age, 55);
+  assert.equal(coast.year, full.year);
+  assert.equal(coast.coastingYears, 0);
+  assert.equal(coast.targetNumber, coast.retirementTargetNumber);
+  assert.match(coast.description, /Retirement target reached at 55/);
+  assert.match(coast.formula, /Continue contributing \$3,500\/month through age 55/);
+  assert.match(coast.formula, /Milestones are checked yearly/);
+  calculator.context.sample = coast;
+  const card = calculator.run("milestoneMarkup(sample)");
+  assert.match(card, /No separate coasting period projected/);
+  assert.doesNotMatch(card, /can coast/);
+  calculator.run("renderDetail(sample)");
+  const detail = calculator.document.getElementById("detail").innerHTML;
+  assert.match(detail, /Retirement Target Year/);
+  assert.doesNotMatch(detail, /can coast|Contribution Stop Year|Cover living costs/);
+  assert.equal((detail.match(/Retirement Target at Age 55/g) || []).length, 1);
+});
+
+test("retirement-age current balances and actual coast periods remain distinct", () => {
+  const calculator = makeCalculator();
+  for (const age of [55, 65]) {
+    const now = milestone(calculator, `coast${age}`, `({ ...DEFAULT_INPUTS, currentAge: ${age}, currentInvestments: 2000000 })`);
+    assert.equal(now.yearsAway, 0);
+    assert.equal(now.coastingYears, 0);
+    assert.match(now.formula, /Your current portfolio/);
+    calculator.context.sample = now;
+    assert.match(calculator.run("milestoneMarkup(sample)"), />Now</);
+    assert.doesNotMatch(calculator.run("milestoneMarkup(sample)"), /can coast now/);
+  }
+  const future = milestone(calculator, "coast55", "({ ...DEFAULT_INPUTS, currentAge: 37, currentInvestments: 555000, portfolioGrowthRate: 0.07 })");
+  assert.equal(future.age, 49);
+  assert.equal(future.coastingYears, 6);
+  calculator.context.sample = future;
+  assert.match(calculator.run("milestoneMarkup(sample)"), /can coast in 12 years/);
+  calculator.run("renderDetail(sample)");
+  assert.match(calculator.document.getElementById("detail").innerHTML, /Contribution Stop Year/);
+});

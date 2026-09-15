@@ -1111,6 +1111,7 @@
       milestone.retirementAge = targetAge;
       milestone.coastTargetNumber = null;
       milestone.retirementTargetNumber = null;
+      milestone.coastingYears = null;
       if (input.currentAge > targetAge) {
         milestone.status = "notApplicable";
         return milestone;
@@ -1122,10 +1123,21 @@
       }
 
       const yearsToRetirement = targetAge - milestone.age;
+      milestone.coastingYears = yearsToRetirement;
       // A zero spending target needs no investments, including at a -100% return.
       milestone.coastTargetNumber = milestone.retirementTargetNumber === 0 ? 0
         : milestone.retirementTargetNumber / Math.pow(1 + input.portfolioGrowthRate, yearsToRetirement);
       milestone.targetNumber = milestone.coastTargetNumber;
+      if (yearsToRetirement === 0) {
+        milestone.description = `Retirement target reached at ${targetAge}`;
+        const timing = yearsAway === 0
+          ? `Your current portfolio of ${fmt(input.currentInvestments)} already reaches the ${fmt(milestone.retirementTargetNumber)} retirement target at age ${targetAge}.`
+          : `Continue contributing $${formatWithCommas(input.monthlyInvesting)}/month through age ${targetAge} (${milestone.year}). The projected ${fmt(milestone.projectedPortfolio)} balance reaches the ${fmt(milestone.retirementTargetNumber)} retirement target then.`;
+        const resolutionNote = yearsAway > 0 ? " Milestones are checked yearly, so a shorter period between checks may be possible." : "";
+        milestone.formula = `${timing} No separate coasting period is projected.${resolutionNote} Reaching this target does not establish how long the portfolio will last.`;
+        milestone.shortFormula = "No separate coasting period projected.";
+        return milestone;
+      }
       const timing = yearsAway === 0
         ? "Your current portfolio reaches the coast threshold now."
         : `Continue contributing $${formatWithCommas(input.monthlyInvesting)}/mo through age ${milestone.age} (${milestone.year}), when your projected portfolio reaches ${fmt(milestone.projectedPortfolio)}.`;
@@ -1303,6 +1315,9 @@
           ${m.shortfall ? `<p class="milestone-shortfall shortfall-value">${formatShortfall(m.shortfall.difference)}</p>
           <p class="milestone-age">${coast ? `Shortfall at Age ${m.shortfall.age}` : "Shortfall After 60 Years"}</p>` : ""}
           ${m.shortfall ? "" : `<p class="milestone-formula off-track-copy">${escapeHtml(unreachableMilestoneCopy(m))}</p>`}`;
+      } else if (coast && m.coastingYears === 0) {
+        body = `<p class="milestone-year ${isNow ? "now" : ""}">${isNow ? "Now" : `~${m.year}`}</p>
+          <p class="milestone-age">No separate coasting period projected</p>`;
       } else if (isNow) {
         const subcopy = coast ? `Age ${m.age} · can coast now` : `Age ${m.age} · 0 years`;
         body = `<p class="milestone-year now">Now</p><p class="milestone-age">${subcopy}</p>`;
@@ -1381,8 +1396,11 @@
       }
 
       const coast = isCoastMilestone(milestone);
-      const timingLabel = coast ? "Contribution Stop Year" : "Target Year";
-      const timingSubcopy = coast
+      const retirementOnly = coast && milestone.coastingYears === 0;
+      const timingLabel = retirementOnly ? "Retirement Target Year" : coast ? "Contribution Stop Year" : "Target Year";
+      const timingSubcopy = retirementOnly
+        ? `Age ${milestone.age} · No separate coasting period projected`
+        : coast
         ? `Age ${milestone.age} · ${milestone.yearsAway === 0 ? "can coast now" : `can coast in ${milestone.yearsAway} years`}`
         : `Age ${milestone.age} · ${milestone.yearsAway} years away`;
 
@@ -1400,7 +1418,7 @@
           </div>
           ${milestone.targetNumber !== null ? `
           <div>
-            <p class="detail-kicker">${coast ? `Required Balance at Age ${milestone.age}` : "Target Balance (Future Dollars)"}</p>
+            <p class="detail-kicker">${retirementOnly ? `Retirement Target at Age ${milestone.age}` : coast ? `Required Balance at Age ${milestone.age}` : "Target Balance (Future Dollars)"}</p>
             <p class="detail-value">~${fmt(milestone.targetNumber)}</p>
           </div>` : ""}
           ${milestone.projectedPortfolio !== null ? `
@@ -1408,7 +1426,7 @@
             <p class="detail-kicker">${coast ? `Projected Portfolio at Age ${milestone.age}` : "Projected Portfolio at Target"}</p>
             <p class="detail-value">~${fmt(milestone.projectedPortfolio)}</p>
           </div>` : ""}
-          ${coast ? `
+          ${coast && !retirementOnly ? `
           <div>
             <p class="detail-kicker">Retirement Target at Age ${milestone.retirementAge}</p>
             <p class="detail-value">~${fmt(milestone.retirementTargetNumber)}</p>
