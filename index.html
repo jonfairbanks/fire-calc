@@ -1247,7 +1247,7 @@
         return `The target age of ${milestone.retirementAge} has already passed. Use the other savings targets to assess your current plan.`;
       }
       if (isCoastMilestone(milestone)) {
-        return `The coast threshold is not reached by age ${milestone.retirementAge} within the 60-year search. Review contributions, spending, and return assumptions.`;
+        return `This projection does not reach Coast FIRE for retirement at age ${milestone.retirementAge}. Review your contributions, spending, and return assumptions.`;
       }
       return "This target is not reached within the 60-year search. Review contributions, spending, and return assumptions.";
     }
