@@ -469,6 +469,17 @@
       line-height: 1.45;
     }
 
+    .milestone-shortfall {
+      margin: 8px 0 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .shortfall-value {
+      color: var(--red-600);
+      overflow-wrap: anywhere;
+    }
+
     .detail {
       padding: 24px;
     }
@@ -881,6 +892,14 @@
       return Number(n).toLocaleString("en-US", { maximumFractionDigits: 20 });
     }
 
+    function formatWholeDollars(value) {
+      return "$" + Math.round(value).toLocaleString("en-US");
+    }
+
+    function formatShortfall(difference) {
+      return Math.abs(difference) < 1 ? "Less than $1" : "−" + formatWholeDollars(-difference);
+    }
+
     function formatPercent(rate) {
       return String(Number((rate * 100).toPrecision(15)));
     }
@@ -1032,8 +1051,25 @@
       return null;
     }
 
+    function buildShortfall(input, yearsAway, targetNumber) {
+      const projectedPortfolio = portfolioAtYear(input, yearsAway);
+      const difference = projectedPortfolio - targetNumber;
+      if (difference >= 0) return null;
+      return {
+        age: input.currentAge + yearsAway,
+        year: new Date().getFullYear() + yearsAway,
+        yearsAway,
+        targetNumber,
+        projectedPortfolio,
+        difference,
+        monthlyInvesting: input.monthlyInvesting
+      };
+    }
+
     function buildMilestone(input, type, label, description, formula, color, yearsAway, multiplier, shortFormula = formula) {
       if (yearsAway === null) {
+        const targetAtSearchEnd = multiplier ? fireNumberAtYear(input, 60, multiplier)
+          : type === "barista" ? Math.max(0, netSpendingAtYear(input, 60) - baristaIncomeAtYear(input, 60)) * 25 : null;
         return {
           type,
           label,
@@ -1043,6 +1079,7 @@
           yearsAway: null,
           targetNumber: null,
           projectedPortfolio: null,
+          shortfall: targetAtSearchEnd === null ? null : buildShortfall(input, 60, targetAtSearchEnd),
           description,
           formula,
           shortFormula,
@@ -1059,6 +1096,7 @@
         targetNumber: multiplier ? fireNumberAtYear(input, yearsAway, multiplier)
           : type === "barista" ? Math.max(0, netSpendingAtYear(input, yearsAway) - baristaIncomeAtYear(input, yearsAway)) * 25 : null,
         projectedPortfolio: portfolioAtYear(input, yearsAway),
+        shortfall: null,
         description,
         formula,
         shortFormula,
@@ -1077,10 +1115,13 @@
         milestone.status = "notApplicable";
         return milestone;
       }
-      if (yearsAway === null) return milestone;
+      milestone.retirementTargetNumber = fireNumberAtYear(input, targetAge - input.currentAge, 25);
+      if (yearsAway === null) {
+        milestone.shortfall = buildShortfall(input, targetAge - input.currentAge, milestone.retirementTargetNumber);
+        return milestone;
+      }
 
       const yearsToRetirement = targetAge - milestone.age;
-      milestone.retirementTargetNumber = fireNumberAtYear(input, targetAge - input.currentAge, 25);
       // A zero spending target needs no investments, including at a -100% return.
       milestone.coastTargetNumber = milestone.retirementTargetNumber === 0 ? 0
         : milestone.retirementTargetNumber / Math.pow(1 + input.portfolioGrowthRate, yearsToRetirement);
@@ -1258,7 +1299,10 @@
       const coast = isCoastMilestone(m);
       let body = "";
       if (unreachable) {
-        body = `<p class="milestone-year na">${m.status === "notApplicable" ? "Not Applicable" : "Not Reached"}</p><p class="milestone-formula off-track-copy">${escapeHtml(unreachableMilestoneCopy(m))}</p>`;
+        body = `<p class="milestone-year na">${m.status === "notApplicable" ? "Not Applicable" : "Not Reached"}</p>
+          ${m.shortfall ? `<p class="milestone-shortfall shortfall-value">${formatShortfall(m.shortfall.difference)}</p>
+          <p class="milestone-age">${coast ? `Shortfall at Age ${m.shortfall.age}` : "Shortfall After 60 Years"}</p>` : ""}
+          ${m.shortfall ? "" : `<p class="milestone-formula off-track-copy">${escapeHtml(unreachableMilestoneCopy(m))}</p>`}`;
       } else if (isNow) {
         const subcopy = coast ? `Age ${m.age} · can coast now` : `Age ${m.age} · 0 years`;
         body = `<p class="milestone-year now">Now</p><p class="milestone-age">${subcopy}</p>`;
@@ -1309,12 +1353,29 @@
       const detail = document.getElementById("detail");
       if (!milestone) return;
       if (milestone.year === null) {
+        const shortfall = milestone.shortfall;
         detail.innerHTML = `
           <div class="detail-head">
             <span class="dot" style="background:${escapeHtml(milestone.color)}"></span>
             <h2>${escapeHtml(milestone.label)} Details</h2>
           </div>
           <p class="detail-copy">${escapeHtml(unreachableMilestoneCopy(milestone))}</p>
+          ${shortfall ? `
+          <div class="detail-grid">
+            <div>
+              <p class="detail-kicker">Target at Age ${shortfall.age}</p>
+              <p class="detail-value">${formatWholeDollars(shortfall.targetNumber)}</p>
+            </div>
+            <div>
+              <p class="detail-kicker">Projected Portfolio at Age ${shortfall.age}</p>
+              <p class="detail-value">${formatWholeDollars(shortfall.projectedPortfolio)}</p>
+            </div>
+            <div>
+              <p class="detail-kicker">Shortfall at Age ${shortfall.age}</p>
+              <p class="detail-value shortfall-value">${formatShortfall(shortfall.difference)}</p>
+            </div>
+          </div>
+          <p class="detail-copy">Comparison at age ${shortfall.age} (${shortfall.year})${isCoastMilestone(milestone) ? "" : ", the end of the 60-year search"}. Assumes you keep contributing $${formatWithCommas(shortfall.monthlyInvesting)}/month until then, with no withdrawals. All amounts are in future dollars.</p>` : ""}
         `;
         return;
       }

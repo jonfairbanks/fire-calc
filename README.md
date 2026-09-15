@@ -28,6 +28,7 @@ By default, all data stays local and does not leave your browser.
   - Barista FIRE: `25x` the gap after part-time income
 - Coast FIRE compares the portfolio at the contribution stop date with the amount needed to grow to the retirement-age target without further contributions or withdrawals. The details show both balances separately. Past retirement ages are marked **Not Applicable**.
 - Milestones are checked at annual intervals for up to 60 years, with Coast FIRE limited to its target age. **Not Reached** means no crossover was found within that window.
+- Missed targets show a dollar shortfall on their card and a target-versus-portfolio comparison in their details. Coast FIRE compares balances at the retirement age; other milestones compare at the end of the 60-year search. These are future-dollar amounts assuming monthly contributions continue through the comparison date, with no withdrawals. Passed Coast retirement ages are not assigned a shortfall.
 
 ## What the Calculator Does Not Test
 

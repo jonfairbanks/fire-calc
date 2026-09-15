@@ -422,3 +422,56 @@ test("legacy annual contribution links convert safely and explicit monthly value
   assert.equal(invalidMonthly.run("inputs.monthlyInvesting"), 3_500);
   assert.match(invalidMonthly.run("inputLoadWarning"), /default values/i);
 });
+
+test("missed Coast FIRE shows the retirement-age shortfall with continued contributions", () => {
+  const calculator = makeCalculator();
+  const input = "({ ...DEFAULT_INPUTS, currentAge: 37, currentInvestments: 555000 })";
+  const coast55 = milestone(calculator, "coast55", input);
+  assert.equal(coast55.status, "unreachable");
+  assert.equal(coast55.shortfall.age, 55);
+  assert.equal(coast55.shortfall.yearsAway, 18);
+  approximately(coast55.shortfall.projectedPortfolio, 2_917_516.1371074775, 1e-6);
+  approximately(coast55.shortfall.targetNumber, 2_979_257.857169833, 1e-6);
+  approximately(coast55.shortfall.difference, -61_741.72006235551, 1e-6);
+  calculator.context.sample = coast55;
+  assert.equal(calculator.run("formatShortfall(sample.shortfall.difference)"), "−$61,742");
+  assert.match(calculator.run("milestoneMarkup(sample)"), /−\$61,742/);
+  calculator.run("renderDetail(sample)");
+  const detail = calculator.document.getElementById("detail").innerHTML;
+  assert.match(detail, /\$2,979,258/);
+  assert.match(detail, /\$2,917,516/);
+  assert.match(detail, /−\$61,742/);
+  assert.match(detail, /keep contributing \$3,500\/month/);
+  assert.match(detail, /All amounts are in future dollars/);
+});
+
+test("other missed targets compare against the end of the 60-year search", () => {
+  const calculator = makeCalculator();
+  const scenario = "({ ...DEFAULT_INPUTS, currentAge: 37, currentInvestments: 100, monthlyInvesting: 0, annualSpending: 100, baristaIncome: 40, inflationRate: 0, portfolioGrowthRate: 0 })";
+  for (const [type, expectedTarget] of [["barista", 1500], ["full", 2500], ["chubby", 3300], ["fat", 5000]]) {
+    const target = milestone(calculator, type, scenario);
+    assert.equal(target.shortfall.age, 97);
+    assert.equal(target.shortfall.yearsAway, 60);
+    assert.equal(target.shortfall.targetNumber, expectedTarget);
+    assert.equal(target.shortfall.projectedPortfolio, 100);
+    assert.equal(target.shortfall.difference, 100 - expectedTarget);
+    calculator.context.sample = target;
+    assert.match(calculator.run("milestoneMarkup(sample)"), /Shortfall After 60 Years/);
+    calculator.run("renderDetail(sample)");
+    assert.match(calculator.document.getElementById("detail").innerHTML, /end of the 60-year search/);
+  }
+});
+
+test("reached and inapplicable targets never show shortfalls", () => {
+  const calculator = makeCalculator();
+  const reached = milestone(calculator, "coast55", "({ ...DEFAULT_INPUTS, currentAge: 37, currentInvestments: 555000, portfolioGrowthRate: 0.07 })");
+  assert.equal(reached.status, "reached");
+  assert.equal(reached.shortfall, null);
+  const past = milestone(calculator, "coast55", "({ ...DEFAULT_INPUTS, currentAge: 70 })");
+  assert.equal(past.status, "notApplicable");
+  assert.equal(past.shortfall, null);
+  calculator.context.sample = past;
+  assert.doesNotMatch(calculator.run("milestoneMarkup(sample)"), /Shortfall/);
+  assert.equal(calculator.run("buildShortfall({ ...DEFAULT_INPUTS, currentInvestments: 100 }, 0, 100)"), null);
+  assert.equal(calculator.run("formatShortfall(-0.2)"), "Less than $1");
+});
