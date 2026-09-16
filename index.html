@@ -576,6 +576,15 @@
       color: var(--gray-400);
     }
 
+    .helper-text a {
+      color: var(--accent);
+      text-underline-offset: 2px;
+    }
+
+    #portfolioGrowthRateHint, #inflationRateHint, #socialSecurityIncomeHint {
+      margin-top: 8px;
+    }
+
     .subtle-button {
       border: 1px solid var(--gray-300);
       border-radius: 4px;
@@ -858,26 +867,29 @@
           <legend>Growth Assumptions</legend>
           <div class="field">
             <label id="growthRateLabel" for="portfolioGrowthRate">Portfolio Growth Rate</label>
-            <div class="tier-row" id="growthTiers" role="group" aria-labelledby="growthRateLabel">
+            <div class="tier-row" id="growthTiers" role="group" aria-labelledby="growthRateLabel" aria-describedby="portfolioGrowthRateHint">
               <button class="tier" type="button" data-rate="0.03">Conservative 3%</button>
               <button class="tier" type="button" data-rate="0.06">Moderate 6%</button>
               <button class="tier" type="button" data-rate="0.09">Aggressive 9%</button>
               <button class="tier" type="button" data-custom="true">Custom</button>
             </div>
             <div class="input-wrap hidden" id="customGrowthWrap">
-              <input id="portfolioGrowthRate" type="text" inputmode="decimal" autocomplete="off" aria-describedby="portfolioGrowthRateError">
+              <input id="portfolioGrowthRate" type="text" inputmode="decimal" autocomplete="off" aria-describedby="portfolioGrowthRateHint portfolioGrowthRateError">
               <span class="affix">%</span>
             </div>
             <p class="field-error hidden" id="portfolioGrowthRateError" aria-live="polite"></p>
+            <p class="helper-text" id="portfolioGrowthRateHint"><a href="https://www.slickcharts.com/sp500/returns/details" target="_blank" rel="noopener noreferrer" aria-label="S&amp;P 500 historical returns (opens in a new tab)">S&amp;P 500</a>: ~11% annualized (2006–2025), dividends reinvested. Before inflation; future returns may vary.</p>
           </div>
 
           <div class="field" data-field="inflationRate">
             <label for="inflationRate">Inflation Rate</label>
             <div class="input-wrap">
-              <input id="inflationRate" type="text" inputmode="decimal" autocomplete="off" aria-describedby="inflationRateError">
+              <input id="inflationRate" type="text" inputmode="decimal" autocomplete="off" aria-describedby="inflationRateHint inflationRateError">
               <span class="affix">%</span>
             </div>
             <p class="field-error hidden" id="inflationRateError" aria-live="polite"></p>
+            <!-- Annualized CPI-U change: (Dec 2025 324.054 / Dec 2005 196.8)^(1/20) - 1 = 2.525%. -->
+            <p class="helper-text" id="inflationRateHint"><a href="https://www.bls.gov/regions/northeast/data/consumerpriceindex_us_table.htm" target="_blank" rel="noopener noreferrer" aria-label="U.S. inflation history from BLS (opens in a new tab)">U.S. inflation</a>: ~2.5% annualized (2006–2025), based on CPI-U. Future inflation may vary.</p>
           </div>
 
           <div class="field" data-field="spendingGrowthRate">
@@ -919,9 +931,10 @@
                 <label for="socialSecurityIncome">Annual SS Benefit (Today's Dollars)</label>
                 <div class="input-wrap">
                   <span class="affix">$</span>
-                  <input id="socialSecurityIncome" type="text" inputmode="decimal" autocomplete="off" aria-describedby="socialSecurityIncomeError">
+                  <input id="socialSecurityIncome" type="text" inputmode="decimal" autocomplete="off" aria-describedby="socialSecurityIncomeHint socialSecurityIncomeError">
                 </div>
                 <p class="field-error hidden" id="socialSecurityIncomeError" aria-live="polite"></p>
+                <p class="helper-text" id="socialSecurityIncomeHint">Check <a href="https://www.ssa.gov/myaccount/" target="_blank" rel="noopener noreferrer" aria-label="my Social Security (opens in a new tab)">my Social Security</a> for a personalized benefit estimate.</p>
               </div>
             </div>
           </div>
@@ -981,7 +994,7 @@
       spendingGrowthRate: 0,
       monthlyInvesting: 3500,
       portfolioGrowthRate: 0.06,
-      inflationRate: 0.03,
+      inflationRate: 0.025,
       baristaIncome: 35000,
       socialSecurityEnabled: false,
       socialSecurityAge: 67,
@@ -1063,8 +1076,10 @@
       return Math.abs(difference) < 1 ? "Less than $1" : "−" + formatWholeDollars(-difference);
     }
 
-    function formatPercent(rate) {
-      return String(Number((rate * 100).toPrecision(15)));
+    function formatPercent(rate, decimals = null) {
+      // Round calculated labels without reducing the precision of editable inputs.
+      const percent = rate * 100;
+      return String(Number(decimals === null ? percent.toPrecision(15) : percent.toFixed(decimals)));
     }
 
     function parseInputValue(id, raw) {
@@ -1340,26 +1355,26 @@
       if (yearsToRetirement === 0) {
         milestone.description = `Retirement target reached at ${targetAge}`;
         const timing = yearsAway === 0
-          ? `Your current portfolio of ${fmt(input.currentInvestments)} already reaches the ${fmt(milestone.retirementTargetNumber)} retirement target at age ${targetAge}.`
-          : `Continue contributing $${formatWithCommas(input.monthlyInvesting)}/month through age ${targetAge} (${milestone.year}). The projected ${fmt(milestone.projectedPortfolio)} balance reaches the ${fmt(milestone.retirementTargetNumber)} retirement target then.`;
-        const resolutionNote = yearsAway > 0 ? " Milestones are checked yearly, so a shorter period between checks may be possible." : "";
-        milestone.formula = `${timing} No separate coasting period is projected.${resolutionNote} Reaching this target does not establish how long the portfolio will last.`;
+          ? `Your current portfolio meets the retirement target at age ${targetAge}.`
+          : `Keep contributing $${formatWithCommas(input.monthlyInvesting)}/month until age ${targetAge}, when you reach the retirement target.`;
+        const resolutionNote = yearsAway > 0 ? " We check once a year, so a shorter coasting period may fall between checks." : "";
+        milestone.formula = `${timing} There is no separate coasting period in this projection.${resolutionNote}`;
         milestone.shortFormula = "No separate coasting period projected.";
         return milestone;
       }
       const timing = yearsAway === 0
-        ? "Your current portfolio reaches the coast threshold now."
-        : `Continue contributing $${formatWithCommas(input.monthlyInvesting)}/mo through age ${milestone.age} (${milestone.year}), when your projected portfolio reaches ${fmt(milestone.projectedPortfolio)}.`;
-      milestone.formula = `${timing} With no further contributions or withdrawals after that point, it is projected to meet the ${fmt(milestone.retirementTargetNumber)} target at age ${targetAge}, assuming ${formatPercent(input.portfolioGrowthRate)}% nominal annual returns. Cover living costs from other income while coasting. This is a target estimate, not a test of retirement sustainability.`;
+        ? "Your savings already meet the coast target."
+        : `Keep contributing $${formatWithCommas(input.monthlyInvesting)}/month until age ${milestone.age} to reach the coast target.`;
+      milestone.formula = `${timing} Then leave the money invested, with no further contributions or withdrawals. At ${formatPercent(input.portfolioGrowthRate)}% annual growth before inflation, it could reach your retirement target at ${targetAge}. Cover living costs with other income until then.`;
       milestone.shortFormula = `Reach the coast balance, then let it grow without contributions or withdrawals until age ${targetAge}.`;
       return milestone;
     }
 
     function calculateMilestones(input) {
       const growthPct = formatPercent(input.portfolioGrowthRate);
-      const spendGrowthPct = formatPercent(totalSpendingGrowthRate(input));
+      const spendGrowthPct = formatPercent(totalSpendingGrowthRate(input), 2);
       const ssNote = input.socialSecurityEnabled
-        ? ` Social Security (${fmt(input.socialSecurityIncome)}/yr in today's dollars, inflation-adjusted) reduces spending need after age ${input.socialSecurityAge}.`
+        ? ` Your Social Security estimate (${fmt(input.socialSecurityIncome)}/year in today's dollars) rises with inflation and lowers the target from age ${input.socialSecurityAge}.`
         : "";
 
       return [
@@ -1370,7 +1385,7 @@
           "barista",
           "Barista FIRE",
           "Part-time covers gap",
-          `Portfolio reaches 25x the spending gap after part-time income (${fmt(input.baristaIncome)}/yr in today's dollars, rising with inflation). This assumes that income continues; there is no modeled end date or test of retirement sustainability.${ssNote}`,
+          `Your target is 25× the spending left after part-time income of ${fmt(input.baristaIncome)}/year in today's dollars. Assumes that income keeps pace with inflation and continues throughout retirement.${ssNote}`,
           "#a9a0d5",
           findBaristaFireYear(input),
           null,
@@ -1381,7 +1396,7 @@
           "full",
           "Full FIRE",
           "25x spending target",
-          `Portfolio reaches net annual spending x 25, equivalent to a 4% initial withdrawal rate. Spending grows at ${spendGrowthPct}%/yr, portfolio compounds at ${growthPct}%. Reaching this target does not establish how long the portfolio will last.${ssNote}`,
+          `Your target is 25× the annual spending your investments need to cover—a 4% starting withdrawal rate. Assumes ${growthPct}% yearly portfolio growth and ${spendGrowthPct}% yearly spending growth.${ssNote}`,
           COLOR_BY_KEY.fireNumber,
           findCrossoverYear(input, 25),
           25,
@@ -1392,7 +1407,7 @@
           "chubby",
           "Chubby FIRE",
           "33x spending target",
-          `Portfolio reaches net annual spending x 33 (about a 3.03% initial withdrawal rate). Uses the same spending plan with a larger savings target; retirement sustainability is not tested.${ssNote}`,
+          `Your target is 33× the annual spending your investments need to cover—about a 3% starting withdrawal rate. This adds a larger cushion to the same spending plan.${ssNote}`,
           "#c4af86",
           findCrossoverYear(input, 33),
           33,
@@ -1403,7 +1418,7 @@
           "fat",
           "Fat FIRE",
           "50x spending target",
-          `Portfolio reaches net annual spending x 50 (a 2% initial withdrawal rate). Uses the same spending plan, without assuming a more expensive lifestyle; retirement sustainability is not tested.${ssNote}`,
+          `Your target is 50× the annual spending your investments need to cover—a 2% starting withdrawal rate. This adds a larger cushion; your spending budget stays the same.${ssNote}`,
           "#bb9296",
           findCrossoverYear(input, 50),
           50,
@@ -1441,7 +1456,7 @@
       const growthPct = formatPercent(input.portfolioGrowthRate);
       const inflationPct = formatPercent(input.inflationRate);
       const realSpendingGrowthPct = formatPercent(input.spendingGrowthRate);
-      const spendingGrowthPct = formatPercent(totalSpendingGrowthRate(input));
+      const spendingGrowthPct = formatPercent(totalSpendingGrowthRate(input), 2);
       return {
         snapshot: {
           currentInvestments: input.currentInvestments,
@@ -1452,13 +1467,13 @@
         milestones,
         projection,
         assumptions: {
-          spending: `${fmt(input.annualSpending)}/yr in today's dollars, growing ${spendingGrowthPct}%/yr nominal (${inflationPct}% inflation compounded with ${realSpendingGrowthPct}% real spending growth).`,
-          contributions: `$${formatWithCommas(input.monthlyInvesting)}/mo in fixed nominal dollars, added at each month end throughout the chart. Each milestone assumes contributions continue until its own date; later milestones do not follow an earlier retirement or coast decision.`,
-          returnRate: `${growthPct}% nominal return every year. Returns do not vary; market losses early in retirement and retirement duration are not modeled.`,
-          startingPortfolio: `${fmt(input.currentInvestments)} invested portfolio compounding at ${growthPct}%`,
-          horizon: `Milestones are checked once per year for up to 60 years, with Coast FIRE limited to its target age. Chart runs through ${projection[projection.length - 1].year} (at least 30 years). A missing milestone means it was not found within the search window.`,
-          retirement: "No retirement withdrawals, depletion date, or success probability are calculated. Spending growth after retirement is not tested. Include taxes and healthcare in spending and account for fees in returns; taxes, fees, and account-access rules are not modeled separately.",
-          income: "Part-time income and Social Security are entered in today's dollars and rise with inflation. Part-time income has no modeled end date. Social Security reduces the spending target from the selected claiming age; claiming-age benefit changes, future earnings, and pre-benefit retirement cash flows are not calculated."
+          spending: `Starts at ${fmt(input.annualSpending)}/year in today's dollars. Rises ${spendingGrowthPct}% each year, combining ${inflationPct}% inflation with ${realSpendingGrowthPct}% real spending growth.`,
+          contributions: `$${formatWithCommas(input.monthlyInvesting)} added at the end of each month, with no yearly increase. The chart assumes you keep contributing. Each milestone is a separate path: you contribute until that date.`,
+          returnRate: `${growthPct}% every year, before inflation. Market ups and downs aren't included.`,
+          startingPortfolio: `${fmt(input.currentInvestments)} invested today.`,
+          horizon: `We check milestones yearly for up to 60 years, and Coast FIRE up to its target age. The chart runs through ${projection[projection.length - 1].year}. “Not Reached” means no match in that time.`,
+          retirement: "This calculator doesn’t model retirement withdrawals or show how long your savings would last. Include taxes and healthcare in spending, and allow for fees in your return. Account-access rules aren’t included.",
+          income: "Income amounts rise with inflation. Part-time income is assumed to continue indefinitely. Social Security lowers the spending target from your chosen claiming age. Enter a benefit estimate that reflects when you stop work and claim benefits; this calculator doesn’t work that out or test how you fund the years before benefits start."
         }
       };
     }
@@ -1507,12 +1522,12 @@
 
     function unreachableMilestoneCopy(milestone) {
       if (milestone.status === "notApplicable") {
-        return `The target age of ${milestone.retirementAge} has already passed. Use the other savings targets to assess your current plan.`;
+        return `You're already past age ${milestone.retirementAge}. Check the other milestones for targets that still apply.`;
       }
       if (isCoastMilestone(milestone)) {
-        return `This projection does not reach Coast FIRE for retirement at age ${milestone.retirementAge}. Review your contributions, spending, and return assumptions.`;
+        return `Your projected savings fall short of the retirement target at ${milestone.retirementAge}, even if you keep contributing until then.`;
       }
-      return "This target is not reached within the 60-year search. Review contributions, spending, and return assumptions.";
+      return "Your projected savings don't reach this target within the next 60 years.";
     }
 
     function milestoneMarkup(m) {
@@ -1630,7 +1645,7 @@
               <p class="detail-value shortfall-value">${formatShortfall(shortfall.difference)}</p>
             </div>
           </div>
-          <p class="detail-copy">Comparison at age ${shortfall.age} (${shortfall.year})${isCoastMilestone(milestone) ? "" : ", the end of the 60-year search"}. Assumes you keep contributing $${formatWithCommas(shortfall.monthlyInvesting)}/month until then, with no withdrawals. All amounts are in future dollars.</p>` : ""}
+          <p class="detail-copy">These balances are for age ${shortfall.age} (${shortfall.year})${isCoastMilestone(milestone) ? "" : ", the end of the 60-year projection"}. They assume you keep contributing $${formatWithCommas(shortfall.monthlyInvesting)}/month with no withdrawals. All amounts are in future dollars.</p>` : ""}
         `;
         return;
       }
@@ -1673,6 +1688,7 @@
             <p class="detail-subcopy">Future dollars at age ${milestone.retirementAge}</p>
           </div>` : ""}
         </div>
+        <p class="detail-copy">Balances are in future dollars. This estimate doesn’t show how long your savings would last in retirement.</p>
       `;
     }
 

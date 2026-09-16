@@ -220,7 +220,7 @@ test("zero, -100%, and tiny positive returns stay mathematically stable", () => 
 
 test("Coast FIRE at 55 with 7% returns reports the stopping threshold and retirement target", () => {
   const calculator = makeCalculator();
-  const scenario = "({ ...DEFAULT_INPUTS, portfolioGrowthRate: 0.07 })";
+  const scenario = "({ ...DEFAULT_INPUTS, portfolioGrowthRate: 0.07, inflationRate: 0.03 })";
   const coast55 = milestone(calculator, "coast55", scenario);
 
   const input = calculator.run(scenario);
@@ -262,6 +262,18 @@ test("percentage formatting preserves fractional values and focus keeps the stor
   calculator.document.getElementById("inflationRate").dispatch("blur");
   assert.equal(calculator.run("inputs.inflationRate"), 0.025);
   assert.equal(calculator.run("inputErrors.inflationRate"), undefined);
+});
+
+test("calculated percentage labels round floating-point noise without rounding input values", () => {
+  const calculator = makeCalculator();
+  calculator.run("result = calculate({ ...DEFAULT_INPUTS, inflationRate: 0.025, spendingGrowthRate: 0 })");
+  assert.match(calculator.run("result.assumptions.spending"), /2\.5%/);
+  assert.doesNotMatch(calculator.run("result.assumptions.spending"), /2\.499/);
+  assert.match(calculator.run("result.milestones.find((item) => item.type === 'full').formula"), /2\.5%/);
+
+  calculator.run("result = calculate({ ...DEFAULT_INPUTS, inflationRate: 0.025, spendingGrowthRate: 0.01 })");
+  assert.match(calculator.run("result.assumptions.spending"), /3\.53%/);
+  assert.equal(calculator.run("formatPercent(0.0123456789)"), "1.23456789");
 });
 
 test("Social Security starts at the selected age and only affects enabled scenarios", () => {
@@ -505,7 +517,7 @@ test("legacy annual contribution links convert safely and explicit monthly value
 
 test("missed Coast FIRE shows the retirement-age shortfall with continued contributions", () => {
   const calculator = makeCalculator();
-  const input = "({ ...DEFAULT_INPUTS, currentAge: 37, currentInvestments: 555000 })";
+  const input = "({ ...DEFAULT_INPUTS, currentAge: 37, currentInvestments: 555000, inflationRate: 0.03 })";
   const coast55 = milestone(calculator, "coast55", input);
   assert.equal(coast55.status, "unreachable");
   assert.equal(coast55.shortfall.age, 55);
@@ -538,7 +550,7 @@ test("other missed targets compare against the end of the 60-year search", () =>
     calculator.context.sample = target;
     assert.match(calculator.run("milestoneMarkup(sample)"), /Shortfall After 60 Years/);
     calculator.run("renderDetail(sample)");
-    assert.match(calculator.document.getElementById("detail").innerHTML, /end of the 60-year search/);
+    assert.match(calculator.document.getElementById("detail").innerHTML, /end of the 60-year projection/);
   }
 });
 
@@ -558,15 +570,15 @@ test("reached and inapplicable targets never show shortfalls", () => {
 
 test("Coast and retirement in the same year are labeled without a separate coast period", () => {
   const calculator = makeCalculator();
-  const coast = milestone(calculator, "coast55", "({ ...DEFAULT_INPUTS, currentAge: 37, currentInvestments: 585000 })");
-  const full = milestone(calculator, "full", "({ ...DEFAULT_INPUTS, currentAge: 37, currentInvestments: 585000 })");
+  const coast = milestone(calculator, "coast55", "({ ...DEFAULT_INPUTS, currentAge: 37, currentInvestments: 585000, inflationRate: 0.03 })");
+  const full = milestone(calculator, "full", "({ ...DEFAULT_INPUTS, currentAge: 37, currentInvestments: 585000, inflationRate: 0.03 })");
   assert.equal(coast.age, 55);
   assert.equal(coast.year, full.year);
   assert.equal(coast.coastingYears, 0);
   assert.equal(coast.targetNumber, coast.retirementTargetNumber);
   assert.match(coast.description, /Retirement target reached at 55/);
-  assert.match(coast.formula, /Continue contributing \$3,500\/month through age 55/);
-  assert.match(coast.formula, /Milestones are checked yearly/);
+  assert.match(coast.formula, /Keep contributing \$3,500\/month until age 55/);
+  assert.match(coast.formula, /We check once a year/);
   calculator.context.sample = coast;
   const card = calculator.run("milestoneMarkup(sample)");
   assert.match(card, /No separate coasting period projected/);
@@ -589,7 +601,7 @@ test("retirement-age current balances and actual coast periods remain distinct",
     assert.match(calculator.run("milestoneMarkup(sample)"), />Now</);
     assert.doesNotMatch(calculator.run("milestoneMarkup(sample)"), /can coast now/);
   }
-  const future = milestone(calculator, "coast55", "({ ...DEFAULT_INPUTS, currentAge: 37, currentInvestments: 555000, portfolioGrowthRate: 0.07 })");
+  const future = milestone(calculator, "coast55", "({ ...DEFAULT_INPUTS, currentAge: 37, currentInvestments: 555000, portfolioGrowthRate: 0.07, inflationRate: 0.03 })");
   assert.equal(future.age, 49);
   assert.equal(future.coastingYears, 6);
   calculator.context.sample = future;
@@ -613,7 +625,7 @@ test("one-year milestones use singular copy in cards and details", () => {
 
 test("chart markers group coincident milestones and remain in chronological order", () => {
   const calculator = makeCalculator();
-  const groups = calculator.run("chartMilestoneGroups(calculate({ ...DEFAULT_INPUTS, currentAge: 37, currentInvestments: 555000, socialSecurityEnabled: true }).projection)");
+  const groups = calculator.run("chartMilestoneGroups(calculate({ ...DEFAULT_INPUTS, currentAge: 37, currentInvestments: 555000, socialSecurityEnabled: true, inflationRate: 0.03 }).projection)");
   assert.deepEqual(Array.from(groups, (group) => group.index), [6, 19, 26, 30]);
   assert.deepEqual(Array.from(groups[0].labels), ["First $1M", "Barista FIRE"]);
   assert.equal(groups.reduce((count, group) => count + group.labels.length, 0), 5);
