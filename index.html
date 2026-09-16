@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>When Might You Be Able to FIRE?</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <meta name="google-analytics-id" content="G-CMDW3H93ZF">
   <script>
     (() => {
@@ -39,28 +40,21 @@
   </script>
   <style>
     :root {
-      --gray-50: #0f172a;
-      --gray-100: #111827;
-      --gray-200: #273244;
-      --gray-300: #3f4b5f;
-      --gray-400: #94a3b8;
-      --gray-500: #cbd5e1;
-      --gray-600: #dbe4ef;
-      --gray-700: #e5edf7;
-      --gray-900: #f8fafc;
-      --surface: #111827;
-      --surface-raised: #172033;
-      --surface-soft: #0b1220;
-      --blue-50: #14243d;
-      --blue-300: #60a5fa;
-      --blue-400: #60a5fa;
-      --blue-500: #3b82f6;
-      --blue-600: #2563eb;
-      --orange-500: #f97316;
-      --green-600: #22c55e;
-      --amber-700: #facc15;
-      --red-100: #431b24;
-      --red-600: #f87171;
+      --gray-50: #141819;
+      --gray-200: #2c3437;
+      --gray-300: #465257;
+      --gray-400: #9aa8ad;
+      --gray-500: #bac4c8;
+      --gray-600: #cbd3d6;
+      --gray-700: #dfe6e8;
+      --gray-900: #f1f5f4;
+      --surface: #191e20;
+      --surface-raised: #222a2d;
+      --surface-soft: #121719;
+      --accent-soft: #233632;
+      --accent: #72d4b0;
+      --accent-strong: #33765f;
+      --negative: #e6a19e;
       color-scheme: dark;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
@@ -71,7 +65,7 @@
 
     body {
       margin: 0;
-      background: radial-gradient(circle at top left, #172554 0, #0f172a 32%, #020617 100%);
+      background: var(--gray-50);
       color: var(--gray-900);
       font-family: inherit;
     }
@@ -91,12 +85,14 @@
 
     .site-header {
       border-bottom: 1px solid var(--gray-200);
-      background: rgba(15, 23, 42, 0.92);
+      background: var(--gray-50);
       padding: 12px 16px;
     }
 
     .site-header-inner {
       width: 100%;
+      max-width: 1536px;
+      margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -107,12 +103,12 @@
       color: var(--gray-700);
       font-size: 20px;
       line-height: 1.2;
-      font-weight: 700;
+      font-weight: 600;
       letter-spacing: -0.02em;
     }
 
     h1 span {
-      color: var(--orange-500);
+      color: var(--accent);
     }
 
     .github-link {
@@ -139,6 +135,8 @@
     }
 
     .layout {
+      max-width: 1584px;
+      margin: 0 auto;
       width: 100%;
       display: flex;
       flex-direction: column;
@@ -158,7 +156,7 @@
 
     .stack {
       display: grid;
-      gap: 24px;
+      gap: 28px;
     }
 
     .stack > section {
@@ -171,16 +169,16 @@
     .assumptions {
       border: 1px solid var(--gray-200);
       border-radius: 8px;
-      background: rgba(17, 24, 39, 0.88);
-      box-shadow: 0 16px 40px rgba(2, 6, 23, 0.18);
+      background: var(--surface);
+      box-shadow: none;
     }
 
     .panel {
       display: grid;
-      gap: 18px;
-      padding: 16px;
-      border-color: rgba(39, 50, 68, 0.72);
-      background: rgba(17, 24, 39, 0.58);
+      gap: 16px;
+      padding: 0;
+      border: 0;
+      background: transparent;
     }
 
     .panel h2,
@@ -200,13 +198,13 @@
     .field-error,
     .input-notice {
       margin: 4px 0 0;
-      color: var(--red-600);
+      color: var(--negative);
       font-size: 12px;
       line-height: 1.5;
     }
 
     input[aria-invalid="true"] {
-      border-color: var(--red-600);
+      border-color: var(--negative);
     }
 
     .projection-note {
@@ -239,11 +237,11 @@
     input[type="text"] {
       width: 100%;
       min-width: 0;
-      border: 1px solid rgba(63, 75, 95, 0.72);
+      border: 1px solid var(--gray-300);
       border-radius: 4px;
-      background: rgba(11, 18, 32, 0.62);
+      background: var(--surface-soft);
       color: var(--gray-900);
-      padding: 6px 12px;
+      padding: 8px 12px;
       font-size: 14px;
       line-height: 1.45;
       outline: none;
@@ -251,9 +249,9 @@
     }
 
     input[type="text"]:focus {
-      border-color: var(--blue-400);
+      border-color: var(--accent);
       background: var(--surface-soft);
-      box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.12);
+      box-shadow: 0 0 0 2px rgba(114, 212, 176, 0.12);
     }
 
     input[type="range"] {
@@ -267,11 +265,11 @@
     }
 
     .tier {
-      border: 1px solid rgba(63, 75, 95, 0.76);
+      border: 1px solid var(--gray-200);
       border-radius: 4px;
-      background: rgba(17, 24, 39, 0.62);
+      background: var(--surface);
       color: var(--gray-600);
-      padding: 4px 10px;
+      padding: 7px 9px;
       font-size: 12px;
       line-height: 1.35;
       font-weight: 500;
@@ -283,18 +281,16 @@
     }
 
     .tier.selected {
-      border-color: var(--blue-600);
-      background: var(--blue-600);
-      color: #fff;
+      border-color: #527d6e;
+      background: var(--accent-soft);
+      color: #b9e6d5;
     }
 
     .ss-box {
       display: grid;
       gap: 12px;
-      border: 1px solid rgba(39, 50, 68, 0.74);
-      border-radius: 4px;
-      background: rgba(15, 23, 42, 0.44);
-      padding: 12px;
+      border-top: 1px solid var(--gray-200);
+      padding: 16px 0 0;
     }
 
     .check-row {
@@ -310,17 +306,16 @@
       width: 16px;
       height: 16px;
       margin: 0;
-      accent-color: var(--blue-600);
+      accent-color: var(--accent-strong);
     }
 
     .section-title {
-      margin: 0 0 12px;
-      color: var(--gray-500);
-      font-size: 12px;
+      margin: 0 0 14px;
+      color: var(--gray-700);
+      font-size: 15px;
       line-height: 1.35;
       font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      letter-spacing: 0;
     }
 
     .snapshot-grid {
@@ -340,8 +335,7 @@
       font-size: 12px;
       line-height: 1.35;
       font-weight: 500;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      letter-spacing: 0;
     }
 
     .stat-value {
@@ -349,7 +343,7 @@
       color: var(--gray-900);
       font-size: 24px;
       line-height: 1.25;
-      font-weight: 700;
+      font-weight: 600;
     }
 
     .milestones-mobile {
@@ -386,7 +380,7 @@
       width: 100%;
       border: 1px solid var(--gray-200);
       border-radius: 8px;
-      background: rgba(17, 24, 39, 0.88);
+      background: var(--surface);
       padding: 14px 16px;
       text-align: left;
       transition: background 120ms ease, border-color 120ms ease;
@@ -394,13 +388,12 @@
 
     .milestone-card:hover {
       border-color: var(--gray-300);
-      background: rgba(23, 32, 51, 0.72);
+      background: var(--surface-raised);
     }
 
     .milestone-card.selected {
-      border-color: rgba(96, 165, 250, 0.78);
-      background: rgba(20, 36, 61, 0.42);
-      box-shadow: inset 3px 0 0 var(--blue-300);
+      border-color: #527d6e;
+      background: #202f2b;
     }
 
     .milestone-head,
@@ -422,8 +415,7 @@
       font-size: 12px;
       line-height: 1.35;
       font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      letter-spacing: 0;
     }
 
     .milestone-desc,
@@ -446,15 +438,16 @@
       color: var(--gray-900);
       font-size: 24px;
       line-height: 1.25;
-      font-weight: 700;
+      font-weight: 600;
     }
 
     .milestone-year.now {
-      color: var(--green-600);
+      color: var(--accent);
     }
 
     .milestone-year.na {
-      color: var(--gray-300);
+      color: var(--gray-400);
+      font-size: 20px;
     }
 
     .milestone-formula {
@@ -476,7 +469,7 @@
     }
 
     .shortfall-value {
-      color: var(--red-600);
+      color: var(--negative);
       overflow-wrap: anywhere;
     }
 
@@ -502,8 +495,7 @@
       font-size: 12px;
       line-height: 1.35;
       font-weight: 500;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      letter-spacing: 0;
     }
 
     .detail-value {
@@ -511,7 +503,7 @@
       color: var(--gray-900);
       font-size: 24px;
       line-height: 1.15;
-      font-weight: 700;
+      font-weight: 600;
     }
 
     .chart-box {
@@ -537,35 +529,169 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 8px 18px;
-      padding: 10px 4px 12px;
-      color: var(--gray-600);
-      font-size: 13px;
-      line-height: 1.5;
+      gap: 2px 12px;
+      padding: 8px 0 0;
     }
 
     .legend-item {
       display: inline-flex;
       align-items: center;
       gap: 7px;
+      min-height: 36px;
+      padding: 4px 6px;
+      border: 0;
+      border-radius: 4px;
+      background: transparent;
+      font-size: 12px;
       white-space: nowrap;
-      cursor: default;
-      transition: opacity 120ms ease;
+      transition: background 140ms ease, opacity 140ms ease;
     }
 
-    .legend:hover .legend-item {
-      opacity: 0.55;
+    .legend-item:hover,
+    .legend-item[aria-pressed="true"] {
+      background: var(--surface-raised);
     }
 
-    .legend:hover .legend-item:hover {
-      opacity: 1;
-    }
+    .legend-label { color: var(--gray-500); }
 
     .legend-swatch {
-      width: 28px;
-      height: 5px;
-      border-radius: 99px;
-      background: currentColor;
+      width: 18px;
+      height: 0;
+      border-top: 2px dashed currentColor;
+    }
+
+    .legend-item:first-child .legend-swatch { border-top-style: solid; }
+
+    .plan-tools, .milestone-navigation {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .helper-text, .plan-status, .milestone-position {
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--gray-400);
+    }
+
+    .subtle-button {
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+      background: transparent;
+      color: var(--gray-600);
+      padding: 8px 12px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .subtle-button:hover { background: var(--surface-raised); }
+    .subtle-button:disabled { opacity: 0.45; }
+    .milestone-navigation { margin: 0 0 12px; }
+    .milestone-position { text-align: center; }
+    .chart-dismiss { display: block; margin: 10px auto 0; }
+    .detail-value, .stat-value { overflow-wrap: anywhere; }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .chart-milestones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 12px;
+      border-top: 1px solid var(--gray-200);
+      margin-top: 12px;
+      padding-top: 10px;
+    }
+
+    .chart-milestone {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 8px;
+      min-height: 44px;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      background: transparent;
+      color: var(--gray-600);
+      text-align: left;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .chart-milestone:hover, .chart-milestone[aria-pressed="true"] {
+      background: var(--surface-raised);
+      border-color: var(--gray-300);
+    }
+
+    .marker-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 22px;
+      height: 22px;
+      border: 1.5px solid var(--gray-500);
+      border-radius: 50%;
+      color: var(--gray-900);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .marker-date { display: block; color: var(--gray-400); }
+
+    .chart-hint {
+      margin: 8px 0 0;
+      color: var(--gray-400);
+      font-size: 11px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .form-group {
+      display: grid;
+      gap: 16px;
+      margin: 0;
+      padding: 0 0 20px;
+      border: 0;
+      border-bottom: 1px solid var(--gray-200);
+      min-width: 0;
+    }
+
+    .form-group:last-child { border-bottom: 0; }
+
+    .form-group legend {
+      padding: 0 0 14px;
+      color: var(--gray-400);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .detail { background: transparent; }
+    .detail-value.shortfall-value { color: var(--negative); }
+
+    button:focus-visible, a:focus-visible, summary:focus-visible, canvas:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .assumptions-toggle {
+      padding-top: 18px;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .assumptions-toggle summary { cursor: pointer; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
     }
 
     .assumptions {
@@ -593,8 +719,7 @@
       color: var(--gray-700);
       font-size: 11px;
       font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      letter-spacing: 0;
     }
 
     .assumption-item dd {
@@ -605,13 +730,14 @@
       display: none !important;
     }
 
+    @media (min-width: 360px) {
+      .snapshot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
     @media (min-width: 640px) {
+      .milestone-navigation { display: none; }
       .site-header {
         padding: 16px 24px;
-      }
-
-      .snapshot-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .milestones-mobile {
@@ -637,7 +763,7 @@
       }
 
       .chart-wrap {
-        height: 440px;
+        height: 360px;
       }
 
       .assumptions {
@@ -653,7 +779,7 @@
       }
 
       .sidebar {
-        width: 320px;
+        width: 296px;
         position: sticky;
         top: 24px;
         align-self: flex-start;
@@ -665,12 +791,6 @@
 
       .milestones-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-
-    @media (min-width: 1280px) {
-      .milestones-grid {
-        grid-template-columns: repeat(6, minmax(0, 1fr));
       }
     }
   </style>
@@ -691,107 +811,121 @@
     <aside class="sidebar">
       <section class="panel" aria-labelledby="details-title">
         <h2 id="details-title">Your Details</h2>
-
-        <div class="field" data-field="currentAge">
-          <label for="currentAge">Current Age</label>
-          <div class="input-wrap">
-            <input id="currentAge" type="text" inputmode="decimal" autocomplete="off" aria-describedby="currentAgeError">
-          </div>
-          <p class="field-error hidden" id="currentAgeError" aria-live="polite"></p>
+        <div class="plan-tools">
+          <p class="plan-status" id="planStatus" role="status">Valid inputs are kept for this tab.</p>
+          <button type="button" class="subtle-button" id="resetPlan">Reset Plan</button>
         </div>
 
-        <div class="field" data-field="currentInvestments">
-          <label for="currentInvestments">Current Investments</label>
-          <div class="input-wrap">
-            <span class="affix">$</span>
-            <input id="currentInvestments" type="text" inputmode="decimal" autocomplete="off" aria-describedby="currentInvestmentsError">
-          </div>
-          <p class="field-error hidden" id="currentInvestmentsError" aria-live="polite"></p>
-        </div>
-
-        <div class="field" data-field="annualSpending">
-          <label for="annualSpending">Annual Spending</label>
-          <div class="input-wrap">
-            <span class="affix">$</span>
-            <input id="annualSpending" type="text" inputmode="decimal" autocomplete="off" aria-describedby="annualSpendingError">
-          </div>
-          <p class="field-error hidden" id="annualSpendingError" aria-live="polite"></p>
-        </div>
-
-        <div class="field" data-field="spendingGrowthRate">
-          <label for="spendingGrowthRate">Real Spending Growth</label>
-          <div class="input-wrap">
-            <input id="spendingGrowthRate" type="text" inputmode="decimal" autocomplete="off" aria-describedby="spendingGrowthRateError">
-            <span class="affix">%</span>
-          </div>
-          <p class="field-error hidden" id="spendingGrowthRateError" aria-live="polite"></p>
-        </div>
-
-        <div class="field" data-field="monthlyInvesting">
-          <label for="monthlyInvesting">Monthly Contribution to Investments</label>
-          <div class="input-wrap">
-            <span class="affix">$</span>
-            <input id="monthlyInvesting" type="text" inputmode="decimal" autocomplete="off" aria-describedby="monthlyInvestingError">
-          </div>
-          <p class="field-error hidden" id="monthlyInvestingError" aria-live="polite"></p>
-        </div>
-
-        <div class="field">
-          <label for="portfolioGrowthRate">Portfolio Growth Rate</label>
-          <div class="tier-row" id="growthTiers">
-            <button class="tier" type="button" data-rate="0.03">Conservative 3%</button>
-            <button class="tier" type="button" data-rate="0.06">Moderate 6%</button>
-            <button class="tier" type="button" data-rate="0.09">Aggressive 9%</button>
-            <button class="tier" type="button" data-custom="true">Custom</button>
-          </div>
-          <div class="input-wrap hidden" id="customGrowthWrap">
-            <input id="portfolioGrowthRate" type="text" inputmode="decimal" autocomplete="off" aria-describedby="portfolioGrowthRateError">
-            <span class="affix">%</span>
-          </div>
-          <p class="field-error hidden" id="portfolioGrowthRateError" aria-live="polite"></p>
-        </div>
-
-        <div class="field" data-field="inflationRate">
-          <label for="inflationRate">Inflation Rate</label>
-          <div class="input-wrap">
-            <input id="inflationRate" type="text" inputmode="decimal" autocomplete="off" aria-describedby="inflationRateError">
-            <span class="affix">%</span>
-          </div>
-          <p class="field-error hidden" id="inflationRateError" aria-live="polite"></p>
-        </div>
-
-        <div class="field" data-field="baristaIncome">
-          <label for="baristaIncome">Barista FIRE Part-Time Income</label>
-          <div class="input-wrap">
-            <span class="affix">$</span>
-            <input id="baristaIncome" type="text" inputmode="decimal" autocomplete="off" aria-describedby="baristaIncomeError">
-          </div>
-          <p class="field-error hidden" id="baristaIncomeError" aria-live="polite"></p>
-        </div>
-
-        <div class="ss-box">
-          <label class="check-row">
-            <input id="socialSecurityEnabled" type="checkbox">
-            <span>Include Social Security</span>
-          </label>
-          <div id="ssFields" class="hidden stack" style="gap: 12px;">
-            <div class="field" data-field="socialSecurityAge">
-              <label for="socialSecurityAge">SS Start Age</label>
-              <div class="input-wrap">
-                <input id="socialSecurityAge" type="text" inputmode="decimal" autocomplete="off" aria-describedby="socialSecurityAgeError">
-              </div>
-              <p class="field-error hidden" id="socialSecurityAgeError" aria-live="polite"></p>
+        <fieldset class="form-group">
+          <legend>Your Plan</legend>
+          <div class="field" data-field="currentAge">
+            <label for="currentAge">Current Age</label>
+            <div class="input-wrap">
+              <input id="currentAge" type="text" inputmode="decimal" autocomplete="off" aria-describedby="currentAgeError">
             </div>
-            <div class="field" data-field="socialSecurityIncome">
-              <label for="socialSecurityIncome">Annual SS Benefit (Today's Dollars)</label>
-              <div class="input-wrap">
-                <span class="affix">$</span>
-                <input id="socialSecurityIncome" type="text" inputmode="decimal" autocomplete="off" aria-describedby="socialSecurityIncomeError">
+            <p class="field-error hidden" id="currentAgeError" aria-live="polite"></p>
+          </div>
+
+          <div class="field" data-field="currentInvestments">
+            <label for="currentInvestments">Current Investments</label>
+            <div class="input-wrap">
+              <span class="affix">$</span>
+              <input id="currentInvestments" type="text" inputmode="decimal" autocomplete="off" aria-describedby="currentInvestmentsError">
+            </div>
+            <p class="field-error hidden" id="currentInvestmentsError" aria-live="polite"></p>
+          </div>
+
+          <div class="field" data-field="annualSpending">
+            <label for="annualSpending">Annual Spending</label>
+            <div class="input-wrap">
+              <span class="affix">$</span>
+              <input id="annualSpending" type="text" inputmode="decimal" autocomplete="off" aria-describedby="annualSpendingError">
+            </div>
+            <p class="field-error hidden" id="annualSpendingError" aria-live="polite"></p>
+          </div>
+
+          <div class="field" data-field="monthlyInvesting">
+            <label for="monthlyInvesting">Monthly Contribution to Investments</label>
+            <div class="input-wrap">
+              <span class="affix">$</span>
+              <input id="monthlyInvesting" type="text" inputmode="decimal" autocomplete="off" aria-describedby="monthlyInvestingError">
+            </div>
+            <p class="field-error hidden" id="monthlyInvestingError" aria-live="polite"></p>
+          </div>
+
+        </fieldset>
+        <fieldset class="form-group">
+          <legend>Growth Assumptions</legend>
+          <div class="field">
+            <label id="growthRateLabel" for="portfolioGrowthRate">Portfolio Growth Rate</label>
+            <div class="tier-row" id="growthTiers" role="group" aria-labelledby="growthRateLabel">
+              <button class="tier" type="button" data-rate="0.03">Conservative 3%</button>
+              <button class="tier" type="button" data-rate="0.06">Moderate 6%</button>
+              <button class="tier" type="button" data-rate="0.09">Aggressive 9%</button>
+              <button class="tier" type="button" data-custom="true">Custom</button>
+            </div>
+            <div class="input-wrap hidden" id="customGrowthWrap">
+              <input id="portfolioGrowthRate" type="text" inputmode="decimal" autocomplete="off" aria-describedby="portfolioGrowthRateError">
+              <span class="affix">%</span>
+            </div>
+            <p class="field-error hidden" id="portfolioGrowthRateError" aria-live="polite"></p>
+          </div>
+
+          <div class="field" data-field="inflationRate">
+            <label for="inflationRate">Inflation Rate</label>
+            <div class="input-wrap">
+              <input id="inflationRate" type="text" inputmode="decimal" autocomplete="off" aria-describedby="inflationRateError">
+              <span class="affix">%</span>
+            </div>
+            <p class="field-error hidden" id="inflationRateError" aria-live="polite"></p>
+          </div>
+
+          <div class="field" data-field="spendingGrowthRate">
+            <label for="spendingGrowthRate">Real Spending Growth</label>
+            <div class="input-wrap">
+              <input id="spendingGrowthRate" type="text" inputmode="decimal" autocomplete="off" aria-describedby="spendingGrowthRateError">
+              <span class="affix">%</span>
+            </div>
+            <p class="field-error hidden" id="spendingGrowthRateError" aria-live="polite"></p>
+          </div>
+
+        </fieldset>
+        <fieldset class="form-group">
+          <legend>Other Income</legend>
+          <div class="field" data-field="baristaIncome">
+            <label for="baristaIncome">Annual Part-Time Income</label>
+            <div class="input-wrap">
+              <span class="affix">$</span>
+              <input id="baristaIncome" type="text" inputmode="decimal" autocomplete="off" aria-describedby="baristaIncomeHint baristaIncomeError">
+            </div>
+            <p class="helper-text" id="baristaIncomeHint">For Barista FIRE, in today's dollars.</p>
+            <p class="field-error hidden" id="baristaIncomeError" aria-live="polite"></p>
+          </div>
+
+          <div class="ss-box">
+            <label class="check-row">
+              <input id="socialSecurityEnabled" type="checkbox">
+              <span>Include Social Security</span>
+            </label>
+            <div id="ssFields" class="hidden stack" style="gap: 12px;">
+              <div class="field" data-field="socialSecurityAge">
+                <label for="socialSecurityAge">SS Start Age</label>
+                <div class="input-wrap">
+                  <input id="socialSecurityAge" type="text" inputmode="decimal" autocomplete="off" aria-describedby="socialSecurityAgeError">
+                </div>
+                <p class="field-error hidden" id="socialSecurityAgeError" aria-live="polite"></p>
               </div>
-              <p class="field-error hidden" id="socialSecurityIncomeError" aria-live="polite"></p>
+              <div class="field" data-field="socialSecurityIncome">
+                <label for="socialSecurityIncome">Annual SS Benefit (Today's Dollars)</label>
+                <div class="input-wrap">
+                  <span class="affix">$</span>
+                  <input id="socialSecurityIncome" type="text" inputmode="decimal" autocomplete="off" aria-describedby="socialSecurityIncomeError">
+                </div>
+                <p class="field-error hidden" id="socialSecurityIncomeError" aria-live="polite"></p>
+              </div>
             </div>
           </div>
-        </div>
+        </fieldset>
       </section>
     </aside>
 
@@ -808,24 +942,33 @@
           <p class="projection-note">Estimates when savings reach each target. The chart assumes you keep contributing and make no withdrawals, including after a milestone. It does not test how long your money would last in retirement. All projected amounts are in future dollars.</p>
           <div class="chart-box">
             <div class="chart-wrap">
-              <canvas id="projectionChart" aria-label="Portfolio accumulation projection"></canvas>
+              <canvas id="projectionChart" tabindex="0" aria-label="Portfolio accumulation projection. Use left and right arrow keys to explore years." aria-describedby="chartHint"></canvas>
             </div>
-            <div class="legend" id="legend"></div>
+            <button type="button" id="clearChartSelection" class="subtle-button chart-dismiss hidden">Clear Chart Selection</button>
+            <div class="legend" id="legend" role="group" aria-label="Emphasize a chart series"></div>
+            <div class="chart-milestones" id="chartMilestones" role="group" aria-label="Milestones on the portfolio line"></div>
+            <p class="chart-hint" id="chartHint">Numbered markers show annual milestone checkpoints. Select a milestone to inspect it; milestones in the same year share a number.</p>
           </div>
         </section>
 
         <section>
           <h2 class="section-title">FIRE Milestones</h2>
-          <div class="milestones-mobile" id="milestonesMobile"></div>
-          <div class="milestones-grid" id="milestonesGrid"></div>
+          <div class="milestone-navigation" aria-label="Milestone navigation">
+            <button type="button" class="subtle-button" id="previousMilestone" aria-controls="milestonesMobile detail">Previous</button>
+            <p class="milestone-position" id="milestonePosition"></p>
+            <button type="button" class="subtle-button" id="nextMilestone" aria-controls="milestonesMobile detail">Next</button>
+          </div>
+          <div class="milestones-mobile" id="milestonesMobile" role="group" aria-label="Choose a FIRE milestone"></div>
+          <div class="milestones-grid" id="milestonesGrid" role="group" aria-label="Choose a FIRE milestone"></div>
         </section>
 
-        <section class="detail" id="detail"></section>
+        <p class="sr-only" id="milestoneStatus" role="status" aria-atomic="true"></p>
+        <section class="detail" id="detail" aria-label="Selected Milestone Details"></section>
 
-        <section>
-          <h2 class="section-title">Assumptions</h2>
+        <details class="assumptions-toggle">
+          <summary class="section-title">Assumptions</summary>
           <div class="assumptions" id="assumptions"></div>
-        </section>
+        </details>
       </div>
     </main>
   </div>
@@ -846,11 +989,11 @@
     };
 
     const COLOR_BY_KEY = {
-      portfolioValue: "#22c55e",
-      baristaFireNumber: "#7c3aed",
-      fireNumber: "#ec4899",
-      chubbyFireNumber: "#d97706",
-      fatFireNumber: "#dc2626"
+      portfolioValue: "#72d4b0",
+      baristaFireNumber: "#a9a0d5",
+      fireNumber: "#8eb5e6",
+      chubbyFireNumber: "#c4af86",
+      fatFireNumber: "#bb9296"
     };
 
     const SERIES = [
@@ -864,6 +1007,8 @@
     const TIER_RATES = [0.03, 0.06, 0.09];
     const moneyFields = new Set(["currentInvestments", "annualSpending", "monthlyInvesting", "baristaIncome", "socialSecurityIncome"]);
     const percentFields = new Set(["spendingGrowthRate", "inflationRate", "portfolioGrowthRate"]);
+    const DRAFT_KEY = "fire-calc-tab-plan-v1";
+    let draftStorageAvailable = true;
     let inputErrors = {};
     let inputLoadWarning = "";
     let inputs = loadInputs();
@@ -873,6 +1018,9 @@
     let customGrowthMode = !TIER_RATES.some((rate) => rate === inputs.portfolioGrowthRate);
     let chartHoverIndex = null;
     let chartHighlightKey = null;
+    let chartPinnedKey = null;
+    let chartTouchSelected = false;
+    let mobileMilestonesVisible = false;
 
     function trackAnalyticsEvent(name, params = {}) {
       if (typeof window.gtag !== "function") return;
@@ -882,9 +1030,24 @@
     function fmt(n) {
       const abs = Math.abs(n);
       const sign = n < 0 ? "-" : "";
+      if (abs >= 1e15) return `${sign}$${abs.toExponential(2)}`;
+      if (abs >= 1e12) return `${sign}$${(abs / 1e12).toFixed(2)}T`;
+      if (abs >= 1e9) return `${sign}$${(abs / 1e9).toFixed(2)}B`;
       if (abs >= 1000000) return `${sign}$${(abs / 1000000).toFixed(2)}M`;
       if (abs >= 1000) return `${sign}$${(abs / 1000).toFixed(0)}k`;
       return `${sign}$${abs.toFixed(0)}`;
+    }
+
+    function formatAxisValue(value) {
+      if (Math.abs(value) >= 1e15) return "$" + value.toExponential(1);
+      for (const [scale, suffix] of [[1e12, "T"], [1e9, "B"], [1e6, "M"], [1e3, "k"]]) {
+        if (Math.abs(value) >= scale) return `$${Number((value / scale).toPrecision(3))}${suffix}`;
+      }
+      return "$" + Number(value.toPrecision(3));
+    }
+
+    function formatYears(count) {
+      return `${count} ${count === 1 ? "year" : "years"}`;
     }
 
     function formatWithCommas(n) {
@@ -954,6 +1117,8 @@
     function loadInputs() {
       inputErrors = {};
       inputLoadWarning = "";
+      const draft = readPlanDraft();
+      if (draft) return draft;
       const fromHash = parseHashData();
       const loaded = { ...DEFAULT_INPUTS };
       if (!fromHash) return loaded;
@@ -971,6 +1136,50 @@
         }
       }
       return loaded;
+    }
+
+    function readPlanDraft() {
+      try {
+        const raw = window.sessionStorage.getItem(DRAFT_KEY);
+        if (!raw) return null;
+        const draft = JSON.parse(raw);
+        // A newly opened shared link must take precedence over an unrelated draft.
+        if (draft?.sourceHash !== window.location.hash || !draft.inputs) return null;
+        if (Object.keys(DEFAULT_INPUTS).some((key) => validateInputValue(key, draft.inputs[key]))) return null;
+        if (typeof draft.inputLoadWarning === "string") inputLoadWarning = draft.inputLoadWarning;
+        return Object.fromEntries(Object.keys(DEFAULT_INPUTS).map((key) => [key, draft.inputs[key]]));
+      } catch {
+        draftStorageAvailable = false;
+        return null;
+      }
+    }
+
+    function savePlanDraft(values = inputs) {
+      try {
+        window.sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ sourceHash: window.location.hash, inputs: values, inputLoadWarning }));
+        draftStorageAvailable = true;
+      } catch {
+        draftStorageAvailable = false;
+      }
+      const message = draftStorageAvailable ? "Valid inputs are kept for this tab."
+        : "Tab storage is unavailable. Refresh will reset this plan.";
+      const status = document.getElementById("planStatus");
+      if (status.textContent !== message) status.textContent = message;
+    }
+
+    function resetPlan() {
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      try { window.sessionStorage.removeItem(DRAFT_KEY); } catch { /* Storage may be blocked. */ }
+      inputs = { ...DEFAULT_INPUTS };
+      inputErrors = {};
+      inputLoadWarning = "";
+      customGrowthMode = false;
+      selectedMilestone = "full";
+      chartHoverIndex = null;
+      chartTouchSelected = false;
+      render(true);
+      revealSelectedMilestone();
+      document.getElementById("planStatus").textContent = "Plan reset. " + document.getElementById("planStatus").textContent;
     }
 
     function portfolioAtYear(input, y) {
@@ -1154,15 +1363,15 @@
         : "";
 
       return [
-        buildCoastMilestone(input, 65, "#38bdf8"),
-        buildCoastMilestone(input, 55, "#facc15"),
+        buildCoastMilestone(input, 65, "#89b8bd"),
+        buildCoastMilestone(input, 55, "#cbc397"),
         buildMilestone(
           input,
           "barista",
           "Barista FIRE",
           "Part-time covers gap",
           `Portfolio reaches 25x the spending gap after part-time income (${fmt(input.baristaIncome)}/yr in today's dollars, rising with inflation). This assumes that income continues; there is no modeled end date or test of retirement sustainability.${ssNote}`,
-          "#a855f7",
+          "#a9a0d5",
           findBaristaFireYear(input),
           null,
           `Portfolio reaches the part-time income gap x 25.`
@@ -1184,7 +1393,7 @@
           "Chubby FIRE",
           "33x spending target",
           `Portfolio reaches net annual spending x 33 (about a 3.03% initial withdrawal rate). Uses the same spending plan with a larger savings target; retirement sustainability is not tested.${ssNote}`,
-          "#f97316",
+          "#c4af86",
           findCrossoverYear(input, 33),
           33,
           "Portfolio reaches spending x 33."
@@ -1195,7 +1404,7 @@
           "Fat FIRE",
           "50x spending target",
           `Portfolio reaches net annual spending x 50 (a 2% initial withdrawal rate). Uses the same spending plan, without assuming a more expensive lifestyle; retirement sustainability is not tested.${ssNote}`,
-          "#ef4444",
+          "#bb9296",
           findCrossoverYear(input, 50),
           50,
           "Portfolio reaches spending x 50."
@@ -1273,6 +1482,7 @@
       document.querySelectorAll("#growthTiers .tier").forEach((button) => {
         const isSelected = button.dataset.custom ? customGrowthMode : !customGrowthMode && Number(button.dataset.rate) === inputs.portfolioGrowthRate;
         button.classList.toggle("selected", isSelected);
+        button.setAttribute("aria-pressed", String(isSelected));
       });
     }
 
@@ -1281,7 +1491,7 @@
         ["Investments", fmt(snapshot.currentInvestments)],
         ["Spending", fmt(snapshot.annualSpending)],
         ["Monthly Contribution", "$" + formatWithCommas(snapshot.monthlyInvesting)],
-        ["Barista Income", fmt(snapshot.baristaIncome)]
+        ["Annual Part-Time Income", fmt(snapshot.baristaIncome) + "/yr"]
       ];
       document.getElementById("snapshot").innerHTML = rows.map(([label, value]) => `
         <div class="card">
@@ -1323,8 +1533,8 @@
         body = `<p class="milestone-year now">Now</p><p class="milestone-age">${subcopy}</p>`;
       } else {
         const subcopy = coast
-          ? `Age ${m.age} · can coast in ${m.yearsAway} years`
-          : `Age ${m.age} · ${m.yearsAway} years away`;
+          ? `Age ${m.age} · can coast in ${formatYears(m.yearsAway)}`
+          : `Age ${m.age} · ${formatYears(m.yearsAway)} away`;
         body = `<p class="milestone-year">~${m.year}</p><p class="milestone-age">${subcopy}</p>`;
       }
       return `
@@ -1349,19 +1559,49 @@
             button.dataset.type = milestone.type;
             button.className = "milestone-card";
             button.addEventListener("click", () => {
-              selectedMilestone = button.dataset.type;
-              trackAnalyticsEvent("milestone_selected", { milestone_type: selectedMilestone });
-              render();
-              if (id === "milestonesMobile") {
-                button.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
-              }
+              selectMilestone(button.dataset.type);
+              if (id === "milestonesMobile") revealSelectedMilestone("smooth");
             });
             container.append(button);
           }
           button.classList.toggle("selected", milestone.type === selectedMilestone);
+          button.setAttribute("aria-pressed", String(milestone.type === selectedMilestone));
+          button.setAttribute("aria-controls", "detail");
           button.innerHTML = milestoneMarkup(milestone);
         });
       }
+    }
+
+    function selectMilestone(type) {
+      selectedMilestone = type;
+      trackAnalyticsEvent("milestone_selected", { milestone_type: type });
+      render();
+    }
+
+    function revealSelectedMilestone(behavior = "auto") {
+      const container = document.getElementById("milestonesMobile");
+      const button = container.querySelector(`[data-type="${selectedMilestone}"]`);
+      if (!button || !container.clientWidth) return;
+      const left = container.scrollLeft + button.getBoundingClientRect().left - container.getBoundingClientRect().left
+        - (container.clientWidth - button.offsetWidth) / 2;
+      container.scrollTo({ left, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : behavior });
+    }
+
+    function syncMilestoneNavigation() {
+      const milestones = currentResult.milestones;
+      const index = milestones.findIndex((m) => m.type === selectedMilestone);
+      const selected = milestones[index];
+      document.getElementById("previousMilestone").disabled = index === 0;
+      document.getElementById("nextMilestone").disabled = index === milestones.length - 1;
+      document.getElementById("milestonePosition").textContent = `${selected.label} · ${index + 1} of ${milestones.length}`;
+      const summary = `${selected.label} details. ${selected.year === null
+        ? unreachableMilestoneCopy(selected)
+        : `${isCoastMilestone(selected) && selected.coastingYears > 0 ? "Contribution stop year" : "Target year"} ${selected.year}, age ${selected.age}.`}`;
+      const status = document.getElementById("milestoneStatus");
+      if (status.textContent !== summary) status.textContent = summary;
+      const visible = document.getElementById("milestonesMobile").clientWidth > 0;
+      if (visible && !mobileMilestonesVisible) revealSelectedMilestone();
+      mobileMilestonesVisible = visible;
     }
 
     function renderDetail(milestone) {
@@ -1401,8 +1641,8 @@
       const timingSubcopy = retirementOnly
         ? `Age ${milestone.age} · No separate coasting period projected`
         : coast
-        ? `Age ${milestone.age} · ${milestone.yearsAway === 0 ? "can coast now" : `can coast in ${milestone.yearsAway} years`}`
-        : `Age ${milestone.age} · ${milestone.yearsAway} years away`;
+        ? `Age ${milestone.age} · ${milestone.yearsAway === 0 ? "can coast now" : `can coast in ${formatYears(milestone.yearsAway)}`}`
+        : `Age ${milestone.age} · ${formatYears(milestone.yearsAway)} away`;
 
       detail.innerHTML = `
         <div class="detail-head">
@@ -1448,8 +1688,66 @@
       `;
     }
 
+    function chartPadding(width) {
+      return { top: 16, right: 18, bottom: 30, left: width < 480 ? 52 : 62 };
+    }
+
+    function chartMilestoneGroups(projection) {
+      const definitions = [
+        ["First $1M", (row) => row.portfolioValue >= 1000000],
+        ["Barista FIRE", (row) => row.portfolioValue >= row.baristaFireNumber],
+        ["Full FIRE", (row) => row.portfolioValue >= row.fireNumber],
+        ["Chubby FIRE", (row) => row.portfolioValue >= row.chubbyFireNumber],
+        ["Fat FIRE", (row) => row.portfolioValue >= row.fatFireNumber]
+      ];
+      const groups = new Map();
+      for (const [label, qualifies] of definitions) {
+        const index = projection.findIndex(qualifies);
+        if (index === -1) continue;
+        if (!groups.has(index)) groups.set(index, { index, row: projection[index], labels: [] });
+        groups.get(index).labels.push(label);
+      }
+      return [...groups.values()].sort((a, b) => a.index - b.index);
+    }
+
+    function renderChartMilestones(projection) {
+      const container = document.getElementById("chartMilestones");
+      const groups = chartMilestoneGroups(projection);
+      container.classList.toggle("hidden", !groups.length);
+      groups.forEach((group, index) => {
+        let button = container.children[index];
+        if (!button) {
+          button = document.createElement("button");
+          button.type = "button";
+          button.className = "chart-milestone";
+          button.setAttribute("aria-controls", "projectionChart");
+          button.addEventListener("click", () => {
+            const rowIndex = Number(button.dataset.index);
+            if (chartTouchSelected && chartHoverIndex === rowIndex) { clearChartHover(); return; }
+            chartHoverIndex = rowIndex;
+            chartTouchSelected = true;
+            drawChart(currentResult.projection);
+          });
+          container.append(button);
+        }
+        button.dataset.index = String(group.index);
+        button.innerHTML = `<span class="marker-number" aria-hidden="true">${index + 1}</span>
+          <span>${escapeHtml(group.labels.join(" + "))}<span class="marker-date">${group.row.year} · Age ${group.row.age}</span></span>`;
+        button.setAttribute("aria-label", `Marker ${index + 1}: ${group.labels.join(" and ")}, ${group.row.year}, age ${group.row.age}`);
+      });
+      while (container.children.length > groups.length) container.lastElementChild.remove();
+    }
+
     function drawChart(projection) {
       const canvas = document.getElementById("projectionChart");
+      if (chartHoverIndex !== null) chartHoverIndex = Math.min(chartHoverIndex, projection.length - 1);
+      const activeRow = chartHoverIndex === null ? null : projection[chartHoverIndex];
+      if (activeRow) canvas.dataset.hoverYear = String(activeRow.year);
+      else canvas.removeAttribute("data-hover-year");
+      document.getElementById("clearChartSelection").classList.toggle("hidden", !chartTouchSelected || !activeRow);
+      canvas.setAttribute("aria-label", activeRow
+        ? `Year ${activeRow.year}, age ${activeRow.age}. ${SERIES.map(([key, label]) => `${label}: ${formatWholeDollars(activeRow[key])}`).join(". ")}. Use left and right arrow keys to explore years.`
+        : "Portfolio accumulation projection. Use left and right arrow keys to explore years.");
       const rect = canvas.getBoundingClientRect();
       const ratio = window.devicePixelRatio || 1;
       canvas.width = Math.max(1, Math.floor(rect.width * ratio));
@@ -1460,38 +1758,47 @@
 
       const width = rect.width;
       const height = rect.height;
-      const padding = { top: 8, right: 34, bottom: 30, left: 72 };
-      const plotW = width - padding.left - padding.right;
-      const plotH = height - padding.top - padding.bottom;
+      const emphasizedKey = chartHighlightKey || chartPinnedKey;
       const allValues = projection.flatMap((row) => SERIES.map(([key]) => row[key]));
       const maxValue = Math.max(...allValues, 1);
       const minYear = projection[0].year;
       const maxYear = projection[projection.length - 1].year;
-      const yMax = Math.ceil(maxValue / 250000) * 250000;
+      const roughStep = maxValue / 4;
+      const magnitude = 10 ** Math.floor(Math.log10(roughStep));
+      const step = [1, 2, 2.5, 5, 10].find((multiple) => multiple * magnitude >= roughStep) * magnitude;
+      const yMax = Math.ceil(maxValue / step) * step;
+      ctx.font = "11px -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif";
+      const ticks = Array.from({ length: Math.round(yMax / step) + 1 }, (_, i) => formatAxisValue(step * i));
+      const padding = chartPadding(width);
+      padding.left = Math.max(padding.left, Math.ceil(Math.max(...ticks.map((label) => ctx.measureText(label).width))) + 16);
+      canvas.dataset.plotLeft = String(padding.left);
+      canvas.dataset.plotRight = String(padding.right);
+      const plotW = width - padding.left - padding.right;
+      const plotH = height - padding.top - padding.bottom;
 
       const x = (year) => padding.left + ((year - minYear) / Math.max(1, maxYear - minYear)) * plotW;
       const y = (value) => padding.top + plotH - (value / yMax) * plotH;
 
       ctx.font = "11px -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif";
       ctx.lineWidth = 1;
-      ctx.strokeStyle = "#273244";
+      ctx.strokeStyle = "#2c3437";
       ctx.fillStyle = "#9ca3af";
       ctx.textAlign = "right";
       ctx.textBaseline = "middle";
 
-      for (let i = 0; i <= 5; i += 1) {
-        const value = (yMax / 5) * i;
+      for (let i = 0; i <= Math.round(yMax / step); i += 1) {
+        const value = step * i;
         const yy = y(value);
         ctx.beginPath();
         ctx.moveTo(padding.left, yy);
         ctx.lineTo(width - padding.right, yy);
         ctx.stroke();
-        ctx.fillText(fmt(value), padding.left - 8, yy);
+        ctx.fillText(ticks[i], padding.left - 10, yy);
       }
 
       ctx.textAlign = "center";
       ctx.textBaseline = "top";
-      const xTicks = 5;
+      const xTicks = width < 480 ? 3 : 5;
       for (let i = 0; i <= xTicks; i += 1) {
         const year = Math.round(minYear + ((maxYear - minYear) / xTicks) * i);
         ctx.fillText(String(year), x(year), height - padding.bottom + 10);
@@ -1500,10 +1807,10 @@
       SERIES.forEach(([key], seriesIndex) => {
         ctx.beginPath();
         ctx.strokeStyle = COLOR_BY_KEY[key];
-        const isHighlighted = chartHighlightKey === null || chartHighlightKey === key;
-        ctx.globalAlpha = isHighlighted ? (key === "portfolioValue" ? 1 : 0.7) : 0.16;
-        ctx.lineWidth = key === "portfolioValue" ? (isHighlighted ? 3 : 2) : (isHighlighted ? 1.5 : 1);
-        ctx.setLineDash(key === "portfolioValue" ? [] : [5, 5]);
+        const isHighlighted = emphasizedKey === null || emphasizedKey === key;
+        ctx.globalAlpha = isHighlighted ? (key === "portfolioValue" || emphasizedKey === key ? 1 : 0.65) : 0.18;
+        ctx.lineWidth = key === "portfolioValue" ? 2.75 : (emphasizedKey === key ? 2 : 1.25);
+        ctx.setLineDash(key === "portfolioValue" ? [] : [4, 6]);
         projection.forEach((row, index) => {
           const xx = x(row.year);
           const yy = y(row[key]);
@@ -1517,7 +1824,7 @@
           ctx.lineTo(x(projection[projection.length - 1].year), y(0));
           ctx.lineTo(x(projection[0].year), y(0));
           ctx.closePath();
-          ctx.globalAlpha = 0.1;
+          ctx.globalAlpha = emphasizedKey && emphasizedKey !== key ? 0.015 : 0.04;
           ctx.fillStyle = COLOR_BY_KEY[key];
           ctx.fill();
           ctx.globalAlpha = 1;
@@ -1525,73 +1832,49 @@
       });
       ctx.setLineDash([]);
 
-      const thresholdMarkers = [
-        {
-          label: "First $1M",
-          color: "#facc15",
-          row: projection.find((row) => row.portfolioValue >= 1000000)
-        },
-        {
-          label: "Barista FIRE",
-          color: COLOR_BY_KEY.baristaFireNumber,
-          row: projection.find((row) => row.portfolioValue >= row.baristaFireNumber)
-        },
-        {
-          label: "Full FIRE",
-          color: COLOR_BY_KEY.fireNumber,
-          row: projection.find((row) => row.portfolioValue >= row.fireNumber)
-        },
-        {
-          label: "Chubby FIRE",
-          color: COLOR_BY_KEY.chubbyFireNumber,
-          row: projection.find((row) => row.portfolioValue >= row.chubbyFireNumber)
-        },
-        {
-          label: "Fat FIRE",
-          color: COLOR_BY_KEY.fatFireNumber,
-          row: projection.find((row) => row.portfolioValue >= row.fatFireNumber)
-        }
-      ].filter((marker) => marker.row);
-
-      thresholdMarkers.forEach((marker, index) => {
-        const markerX = x(marker.row.year);
-        const isMarkerHighlighted = chartHoverIndex !== null && projection[chartHoverIndex]?.year === marker.row.year;
-        ctx.strokeStyle = marker.color;
-        ctx.globalAlpha = isMarkerHighlighted ? 0.52 : 0.28;
-        ctx.lineWidth = isMarkerHighlighted ? 1.35 : 1;
-        ctx.setLineDash([]);
-        ctx.beginPath();
-        ctx.moveTo(markerX, padding.top);
-        ctx.lineTo(markerX, padding.top + plotH);
-        ctx.stroke();
-        ctx.globalAlpha = 1;
-
-        const label = `${marker.label} · ~${marker.row.year}`;
-        ctx.font = "12px -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif";
-        const labelWidth = ctx.measureText(label).width + 18;
-        const labelX = Math.min(Math.max(padding.left, markerX - labelWidth / 2), width - padding.right - labelWidth);
-        const markerLabelBaseY = padding.top + Math.min(120, plotH - 32);
-        const labelY = Math.max(padding.top + 8, markerLabelBaseY - index * 28);
-        ctx.fillStyle = "rgba(15, 23, 42, 0.7)";
-        ctx.strokeStyle = marker.color;
-        ctx.globalAlpha = isMarkerHighlighted ? 0.78 : 0.46;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.roundRect(labelX, labelY, labelWidth, 24, 8);
-        ctx.fill();
-        ctx.stroke();
-        ctx.globalAlpha = isMarkerHighlighted ? 0.96 : 0.64;
-        ctx.fillStyle = marker.color;
-        ctx.textAlign = "left";
-        ctx.textBaseline = "middle";
-        ctx.fillText(label, labelX + 9, labelY + 12);
-        ctx.globalAlpha = 1;
+      const markerGroups = chartMilestoneGroups(projection);
+      const drawMarkerBadges = () => {
+        const placedMarkers = [];
+        markerGroups.forEach((group, index) => {
+          const pointX = x(group.row.year);
+          const pointY = y(group.row.portfolioValue);
+          // Keep nearby years legible; the short leader still identifies the exact checkpoint.
+          const markerX = Math.max(padding.left + 10, Math.min(width - padding.right - 10, pointX));
+          const baseY = Math.max(padding.top + 10, Math.min(padding.top + plotH - 10, pointY));
+          const offsets = [0, -24, 24, -48, 48, -72, 72, -96, 96];
+          const markerY = offsets.map((offset) => baseY + offset).find((candidate) =>
+            candidate >= padding.top + 10 && candidate <= padding.top + plotH - 10
+            && !placedMarkers.some((other) => Math.hypot(markerX - other.x, candidate - other.y) < 24)) ?? baseY;
+          placedMarkers.push({ x: markerX, y: markerY });
+          const selected = chartHoverIndex === group.index;
+          ctx.globalAlpha = 1;
+          ctx.strokeStyle = selected ? COLOR_BY_KEY.portfolioValue : "#bac4c8";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(pointX, pointY);
+          ctx.lineTo(markerX, markerY);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(markerX, markerY, 9, 0, Math.PI * 2);
+          ctx.fillStyle = selected ? "#233632" : "#191e20";
+          ctx.fill();
+          ctx.stroke();
+          ctx.font = "600 10px -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillStyle = "#f1f5f4";
+          ctx.fillText(String(index + 1), markerX, markerY);
+        });
+      };
+      if (chartHoverIndex === null) drawMarkerBadges();
+      document.querySelectorAll("#chartMilestones button").forEach((button) => {
+        button.setAttribute("aria-pressed", String(chartHoverIndex === Number(button.dataset.index)));
       });
 
       if (chartHoverIndex !== null && projection[chartHoverIndex]) {
         const hoverRow = projection[chartHoverIndex];
         const hoverX = x(hoverRow.year);
-        ctx.strokeStyle = "#cbd5e1";
+        ctx.strokeStyle = "#78888e";
         ctx.lineWidth = 1;
         ctx.setLineDash([3, 4]);
         ctx.beginPath();
@@ -1607,25 +1890,26 @@
           ctx.arc(hoverX, pointY, 4, 0, Math.PI * 2);
           ctx.fill();
           ctx.lineWidth = 2;
-          ctx.strokeStyle = "#0f172a";
+          ctx.strokeStyle = "#191e20";
           ctx.stroke();
         });
 
+        drawMarkerBadges();
         const tooltipLines = [
           `Year ${hoverRow.year} · Age ${hoverRow.age}`,
           ...SERIES.map(([key, label]) => `${label}: ${fmt(hoverRow[key])}`),
+          ...markerGroups.filter((group) => group.index === chartHoverIndex).flatMap((group) => group.labels.map((label) => `${label} reached`)),
         ];
         ctx.font = "12px -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif";
         const lineHeight = 17;
-        const tooltipWidth = Math.max(...tooltipLines.map((line) => ctx.measureText(line).width)) + 24;
+        const tooltipWidth = Math.min(width - 16, Math.max(...tooltipLines.map((line) => ctx.measureText(line).width)) + 24);
         const tooltipHeight = tooltipLines.length * lineHeight + 18;
-        const tooltipX = hoverX + tooltipWidth + 16 > width
-          ? Math.max(padding.left, hoverX - tooltipWidth - 14)
-          : hoverX + 14;
+        const tooltipX = Math.max(8, Math.min(width - tooltipWidth - 8,
+          hoverX + tooltipWidth + 16 > width ? hoverX - tooltipWidth - 14 : hoverX + 14));
         const tooltipY = Math.max(padding.top + 6, Math.min(padding.top + plotH - tooltipHeight - 6, padding.top + 12));
 
-        ctx.fillStyle = "rgba(15, 23, 42, 0.96)";
-        ctx.strokeStyle = "#334155";
+        ctx.fillStyle = "rgba(25, 30, 32, 0.97)";
+        ctx.strokeStyle = "#465257";
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.roundRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight, 8);
@@ -1636,7 +1920,7 @@
         ctx.textBaseline = "top";
         tooltipLines.forEach((line, index) => {
           ctx.fillStyle = index === 0 ? "#f8fafc" : "#cbd5e1";
-          ctx.fillText(line, tooltipX + 12, tooltipY + 12 + index * lineHeight);
+          ctx.fillText(line, tooltipX + 12, tooltipY + 12 + index * lineHeight, tooltipWidth - 24);
         });
       }
     }
@@ -1645,7 +1929,7 @@
       if (!currentResult?.projection?.length) return;
       const canvas = document.getElementById("projectionChart");
       const rect = canvas.getBoundingClientRect();
-      const padding = { left: 72, right: 34 };
+      const padding = { left: Number(canvas.dataset.plotLeft), right: Number(canvas.dataset.plotRight) };
       const plotW = rect.width - padding.left - padding.right;
       const pointerX = event.clientX - rect.left;
       if (pointerX < padding.left || pointerX > rect.width - padding.right) {
@@ -1661,6 +1945,7 @@
     }
 
     function clearChartHover() {
+      chartTouchSelected = false;
       if (chartHoverIndex === null) return;
       document.getElementById("projectionChart").removeAttribute("data-hover-year");
       chartHoverIndex = null;
@@ -1669,19 +1954,32 @@
 
     function renderLegend() {
       const legend = document.getElementById("legend");
+      if (legend.children.length) return;
       legend.innerHTML = SERIES.map(([key, label]) => `
-        <span class="legend-item" data-series="${escapeHtml(key)}" style="color:${COLOR_BY_KEY[key]}">
-          <span class="legend-swatch"></span>
-          <span style="color:#94a3b8">${escapeHtml(label)}</span>
-        </span>
+        <button type="button" class="legend-item" data-series="${escapeHtml(key)}" aria-pressed="false" style="color:${COLOR_BY_KEY[key]}">
+          <span class="legend-swatch" aria-hidden="true"></span>
+          <span class="legend-label">${escapeHtml(label)}</span>
+        </button>
       `).join("");
       legend.querySelectorAll(".legend-item").forEach((item) => {
-        item.addEventListener("mouseenter", () => {
+        const preview = () => {
           chartHighlightKey = item.dataset.series;
           if (currentResult) drawChart(currentResult.projection);
-        });
-        item.addEventListener("mouseleave", () => {
+        };
+        const restore = () => {
           chartHighlightKey = null;
+          if (currentResult) drawChart(currentResult.projection);
+        };
+        item.addEventListener("mouseenter", preview);
+        item.addEventListener("mouseleave", restore);
+        item.addEventListener("focus", preview);
+        item.addEventListener("blur", restore);
+        item.addEventListener("click", () => {
+          chartPinnedKey = chartPinnedKey === item.dataset.series ? null : item.dataset.series;
+          chartHighlightKey = null;
+          legend.querySelectorAll(".legend-item").forEach((button) => {
+            button.setAttribute("aria-pressed", String(button.dataset.series === chartPinnedKey));
+          });
           if (currentResult) drawChart(currentResult.projection);
         });
       });
@@ -1698,7 +1996,10 @@
       renderSnapshot(currentResult.snapshot);
       renderMilestones(currentResult.milestones);
       renderDetail(selected);
+      syncMilestoneNavigation();
+      savePlanDraft();
       renderAssumptions(currentResult.assumptions);
+      renderChartMilestones(currentResult.projection);
       drawChart(currentResult.projection);
       renderLegend();
     }
@@ -1777,19 +2078,69 @@
       });
     });
 
+    document.getElementById("resetPlan").addEventListener("click", resetPlan);
+    window.addEventListener("pagehide", () => {
+      const active = document.activeElement;
+      const values = { ...inputs };
+      if (active && Object.hasOwn(DEFAULT_INPUTS, active.id) && active.type === "text") {
+        const value = parseInputValue(active.id, active.value);
+        if (!validateInputValue(active.id, value)) values[active.id] = value;
+      }
+      savePlanDraft(values);
+    });
+    for (const [id, delta] of [["previousMilestone", -1], ["nextMilestone", 1]]) {
+      document.getElementById(id).addEventListener("click", () => {
+        const index = currentResult.milestones.findIndex((m) => m.type === selectedMilestone);
+        const next = currentResult.milestones[index + delta];
+        if (next) { selectMilestone(next.type); revealSelectedMilestone("smooth"); }
+      });
+    }
+
     const chartCanvas = document.getElementById("projectionChart");
-    chartCanvas.addEventListener("mousemove", updateChartHover);
-    chartCanvas.addEventListener("mouseleave", clearChartHover);
+    chartCanvas.addEventListener("mousemove", (event) => {
+      if (!chartTouchSelected) updateChartHover(event);
+    });
+    chartCanvas.addEventListener("mouseleave", () => {
+      if (!chartTouchSelected) clearChartHover();
+    });
+    chartCanvas.addEventListener("keydown", (event) => {
+      if (!["ArrowLeft", "ArrowRight", "Home", "End", "Escape"].includes(event.key) || !currentResult) return;
+      event.preventDefault();
+      if (event.key === "Escape") { clearChartHover(); return; }
+      const lastIndex = currentResult.projection.length - 1;
+      chartHoverIndex = event.key === "Home" ? 0 : event.key === "End" ? lastIndex
+        : Math.max(0, Math.min(lastIndex, (chartHoverIndex ?? -1) + (event.key === "ArrowLeft" ? -1 : 1)));
+      const row = currentResult.projection[chartHoverIndex];
+      chartCanvas.dataset.hoverYear = String(row.year);
+      drawChart(currentResult.projection);
+    });
+    chartCanvas.addEventListener("blur", () => {
+      if (!chartTouchSelected) clearChartHover();
+    });
+    document.getElementById("clearChartSelection").addEventListener("click", () => {
+      clearChartHover();
+      chartCanvas.focus();
+    });
+    chartCanvas.addEventListener("touchstart", (event) => {
+      if (event.touches.length) {
+        chartTouchSelected = true;
+        updateChartHover(event.touches[0]);
+      }
+    }, { passive: true });
     chartCanvas.addEventListener("touchmove", (event) => {
       if (!event.touches.length) return;
       updateChartHover(event.touches[0]);
     }, { passive: true });
-    chartCanvas.addEventListener("touchend", clearChartHover);
+    chartCanvas.addEventListener("touchcancel", clearChartHover);
 
     window.addEventListener("resize", () => {
       if (resizeRaf) window.cancelAnimationFrame(resizeRaf);
       resizeRaf = window.requestAnimationFrame(() => {
-        if (currentResult) drawChart(currentResult.projection);
+        if (currentResult) {
+          drawChart(currentResult.projection);
+          revealSelectedMilestone();
+          syncMilestoneNavigation();
+        }
       });
     });
 

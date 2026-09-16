@@ -37,6 +37,14 @@ The chart projects accumulation and makes no retirement withdrawals. Reaching a 
 
 Part-time income has no modeled end date. Chubby and Fat FIRE use the same spending plan with higher multiples; they do not assume a different lifestyle budget. Taxes, investment fees, healthcare changes, and account-access rules are not separately modeled. Account for relevant costs in spending and returns.
 
+## Using the Calculator
+
+Valid inputs are kept in browser session storage for the current tab so refresh does not discard your plan. **Reset Plan** restores defaults and clears any shared-input fragment. A different shared-input link takes precedence over the previous draft; subsequent edits to that link survive refresh. If tab storage is blocked, the calculator still works and shows that refresh will reset the plan.
+
+Growth presets and milestone buttons expose their selected state to assistive technology. On small screens, the milestone carousel starts on the selected card; **Previous** and **Next** change the selected milestone and its details.
+
+Hover over the chart or use its arrow keys, Home, and End to inspect years. Numbered chart markers map to a selectable key with milestone names, years, and ages; milestones at the same annual checkpoint share one number. A touch selection stays visible after release; use **Clear Chart Selection** or Escape to dismiss it. Chart labels use compact billion, trillion, and scientific formats when needed. Part-time income is an annual amount in today's dollars.
+
 ## Input Validation
 
 Invalid entries show an error and leave results based on the last valid value. Fractional percentages remain visible when editing and after leaving a field. Shared input links accept only known fields with valid types and ranges; invalid shared values fall back to defaults with a notice. Older links using `annualInvesting` are converted to monthly amounts by dividing by 12; an explicit `monthlyInvesting` value takes precedence. The default contribution is $3,500/month ($42,000/year).

@@ -44,7 +44,25 @@ function element() {
   };
 }
 
-function makeCalculator(hash = "") {
+function makeSessionStorage(initial = {}) {
+  const values = new Map(Object.entries(initial));
+  return {
+    getItem(key) {
+      return values.has(key) ? values.get(key) : null;
+    },
+    setItem(key, value) {
+      values.set(key, String(value));
+    },
+    removeItem(key) {
+      values.delete(key);
+    },
+    valueFor(key) {
+      return values.get(key) ?? null;
+    }
+  };
+}
+
+function makeCalculator(hash = "", sessionStorage = makeSessionStorage()) {
   const elements = new Map();
   const document = {
     activeElement: null,
@@ -58,6 +76,7 @@ function makeCalculator(hash = "") {
   };
   const window = {
     location: { hash },
+    sessionStorage,
     addEventListener() {}
   };
   const context = vm.createContext({
@@ -74,6 +93,7 @@ function makeCalculator(hash = "") {
   return {
     context,
     document,
+    sessionStorage,
     run: (expression) => vm.runInContext(expression, context)
   };
 }
@@ -389,6 +409,66 @@ test("malformed and wrongly typed shared inputs keep defaults and show a warning
   assert.match(invalidTypes.run("inputLoadWarning"), /default values/i);
 });
 
+test("tab drafts restore valid input changes while a new shared link takes precedence", () => {
+  const storage = makeSessionStorage();
+  const firstVisit = makeCalculator("", storage);
+  firstVisit.run("inputs.currentAge = 42; inputs.monthlyInvesting = 4800; savePlanDraft()");
+
+  const refreshed = makeCalculator("", storage);
+  assert.equal(refreshed.run("inputs.currentAge"), 42);
+  assert.equal(refreshed.run("inputs.monthlyInvesting"), 4_800);
+
+  const shared = makeCalculator(encodedHash({ currentAge: 51, monthlyInvesting: 1200 }), storage);
+  assert.equal(shared.run("inputs.currentAge"), 51);
+  assert.equal(shared.run("inputs.monthlyInvesting"), 1_200);
+});
+
+test("shared-input warnings remain visible after a same-link refresh", () => {
+  const storage = makeSessionStorage();
+  const hash = encodedHash({ currentAge: 44, annualSpending: -1 });
+  const firstVisit = makeCalculator(hash, storage);
+  const warning = firstVisit.run("inputLoadWarning");
+  assert.match(warning, /default values/i);
+  firstVisit.run("savePlanDraft()");
+
+  const refreshed = makeCalculator(hash, storage);
+  assert.equal(refreshed.run("inputs.currentAge"), 44);
+  assert.equal(refreshed.run("inputs.annualSpending"), 70_000);
+  assert.equal(refreshed.run("inputLoadWarning"), warning);
+});
+
+test("corrupt or denied tab storage leaves the calculator usable", () => {
+  const corruptStorage = makeSessionStorage({ "fire-calc-tab-plan-v1": "{not json" });
+  const corrupt = makeCalculator("", corruptStorage);
+  assert.equal(corrupt.run("inputs.currentAge"), 30);
+  assert.equal(corrupt.run("draftStorageAvailable"), false);
+  corrupt.run("savePlanDraft()");
+  assert.equal(corrupt.run("draftStorageAvailable"), true);
+
+  const deniedStorage = {
+    getItem() { throw new Error("blocked"); },
+    setItem() { throw new Error("blocked"); },
+    removeItem() { throw new Error("blocked"); }
+  };
+  const denied = makeCalculator("", deniedStorage);
+  assert.equal(denied.run("inputs.currentAge"), 30);
+  assert.doesNotThrow(() => denied.run("savePlanDraft()"));
+  assert.equal(denied.run("draftStorageAvailable"), false);
+  assert.match(denied.document.getElementById("planStatus").textContent, /unavailable/i);
+});
+
+test("currency and axis labels stay compact and readable at large values", () => {
+  const calculator = makeCalculator();
+  assert.equal(calculator.run("fmt(1250000)"), "$1.25M");
+  assert.equal(calculator.run("fmt(12500000000)"), "$12.50B");
+  assert.equal(calculator.run("formatAxisValue(250000)"), "$250k");
+  assert.equal(calculator.run("formatAxisValue(2500000)"), "$2.5M");
+  assert.equal(calculator.run("formatAxisValue(12500000000)"), "$12.5B");
+  assert.equal(calculator.run("fmt(1000000000000)"), "$1.00T");
+  assert.equal(calculator.run("formatAxisValue(5000000000000)"), "$5T");
+  assert.equal(calculator.run("formatAxisValue(2.5e30)"), "$2.5e+30");
+});
+
 test("loading shared values refreshes a focused field without stale displayed values", () => {
   const calculator = makeCalculator();
   const field = calculator.document.getElementById("spendingGrowthRate");
@@ -516,4 +596,27 @@ test("retirement-age current balances and actual coast periods remain distinct",
   assert.match(calculator.run("milestoneMarkup(sample)"), /can coast in 12 years/);
   calculator.run("renderDetail(sample)");
   assert.match(calculator.document.getElementById("detail").innerHTML, /Contribution Stop Year/);
+});
+
+test("one-year milestones use singular copy in cards and details", () => {
+  const calculator = makeCalculator();
+  const full = milestone(calculator, "full", "({ ...DEFAULT_INPUTS, currentInvestments: 1700000 })");
+  assert.equal(full.yearsAway, 1);
+  calculator.context.sample = full;
+  assert.match(calculator.run("formatYears(sample.yearsAway)"), /^1 year$/);
+  assert.match(calculator.run("milestoneMarkup(sample)"), /Age 31 · 1 year away/);
+  assert.doesNotMatch(calculator.run("milestoneMarkup(sample)"), /1 years/);
+  calculator.run("renderDetail(sample)");
+  assert.match(calculator.document.getElementById("detail").innerHTML, /Age 31 · 1 year away/);
+});
+
+
+test("chart markers group coincident milestones and remain in chronological order", () => {
+  const calculator = makeCalculator();
+  const groups = calculator.run("chartMilestoneGroups(calculate({ ...DEFAULT_INPUTS, currentAge: 37, currentInvestments: 555000, socialSecurityEnabled: true }).projection)");
+  assert.deepEqual(Array.from(groups, (group) => group.index), [6, 19, 26, 30]);
+  assert.deepEqual(Array.from(groups[0].labels), ["First $1M", "Barista FIRE"]);
+  assert.equal(groups.reduce((count, group) => count + group.labels.length, 0), 5);
+  assert.equal(calculator.run("chartMilestoneGroups(calculate({ ...DEFAULT_INPUTS, currentInvestments: 0, monthlyInvesting: 0 }).projection).length"), 0);
+  assert.equal(calculator.run("chartMilestoneGroups(calculate({ ...DEFAULT_INPUTS, currentInvestments: 10000000 }).projection).length"), 1);
 });
