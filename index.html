@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>When Might You Be Able to FIRE?</title>
+  <title>On the Road to FIRE</title>
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <meta name="google-analytics-id" content="G-CMDW3H93ZF">
   <script>
@@ -96,23 +96,79 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 20px;
     }
 
-    h1 {
+    .site-title {
       margin: 0;
-      color: var(--gray-700);
-      font-size: 20px;
-      line-height: 1.2;
-      font-weight: 600;
-      letter-spacing: -0.02em;
+      min-width: 0;
+      color: var(--gray-900);
+      font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      font-size: clamp(25px, 2.8vw, 36px);
+      line-height: 1.25;
+      font-weight: 400;
+      letter-spacing: -0.035em;
+      text-wrap: balance;
     }
 
-    h1 span {
+    .title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .site-logo {
+      width: clamp(28px, 3vw, 36px);
+      height: auto;
+      flex-shrink: 0;
+    }
+
+    .fire-term {
+      padding: 0;
+      border: 0;
+      background: transparent;
       color: var(--accent);
+      font: inherit;
+      font-style: italic;
+      max-width: 100%;
+      text-align: left;
+      border-bottom: 2px dotted rgba(114, 212, 176, 0.65);
+    }
+
+    .fire-term[aria-expanded="true"] {
+      border-bottom-color: transparent;
+    }
+
+    .fire-word {
+      display: inline-block;
+      white-space: nowrap;
+      transition: margin-right 220ms ease;
+    }
+
+    .fire-tail {
+      display: inline-block;
+      max-width: 0;
+      overflow: hidden;
+      vertical-align: bottom;
+      transition: max-width 220ms ease;
+    }
+
+    .fire-term[aria-expanded="true"] .fire-tail {
+      max-width: 12ch;
+    }
+
+    .fire-term[aria-expanded="true"] .fire-word:not(:last-child) {
+      margin-right: 0.2em;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .fire-word, .fire-tail { transition: none; }
     }
 
     .github-link {
       display: inline-flex;
+      flex-shrink: 0;
       align-items: center;
       justify-content: center;
       width: 34px;
@@ -147,6 +203,15 @@
     .sidebar {
       width: 100%;
       flex-shrink: 0;
+    }
+
+    .sidebar .sidebar-disclaimer {
+      margin: 0;
+      padding-top: 14px;
+      border-top: 1px solid var(--gray-200);
+      color: var(--gray-400);
+      font-size: 12px;
+      line-height: 1.5;
     }
 
     .main {
@@ -317,6 +382,12 @@
       font-weight: 600;
       letter-spacing: 0;
     }
+
+    .mobile-plan-link { display: inline-flex; align-items: center; min-height: 44px; color: var(--accent-strong); font-size: 13px; }
+    .jump-target { scroll-margin-top: 20px; }
+    .snapshot-income { margin: 12px 0 0; }
+    .marker-detail-choices { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; margin-top: 12px; }
+    .marker-detail-choices > span { font-size: 12px; color: var(--gray-400); }
 
     .snapshot-grid {
       display: grid;
@@ -506,6 +577,42 @@
       font-weight: 600;
     }
 
+    .projection-heading {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .retirement-controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 140px)) minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+      margin-top: 18px;
+    }
+
+    .retirement-options { display: grid; gap: 12px; padding-top: 24px; }
+    .retirement-options .check-row { font-size: 12px; }
+    .retirement-controls + .projection-note { margin-top: 12px; }
+    .retirement-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      padding: 16px 0 20px;
+    }
+    .retirement-summary .stat-value { font-size: 22px; }
+    .retirement-summary .helper-text { margin-top: 4px; }
+    @media (max-width: 800px) {
+      .retirement-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .retirement-options { grid-column: 1 / -1; padding-top: 0; }
+    }
+    @media (max-width: 479px) {
+      .retirement-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+      .retirement-summary > :last-child { grid-column: 1 / -1; }
+    }
+
     .chart-box {
       padding: 8px;
       width: 100%;
@@ -616,6 +723,7 @@
     .chart-milestones {
       display: flex;
       flex-wrap: wrap;
+      justify-content: center;
       gap: 4px 12px;
       border-top: 1px solid var(--gray-200);
       margin-top: 12px;
@@ -781,6 +889,7 @@
     }
 
     @media (min-width: 1024px) {
+      .mobile-plan-link { display: none; }
       .layout {
         flex-direction: row;
         padding-left: 24px;
@@ -807,7 +916,10 @@
 <body>
   <header class="site-header">
     <div class="site-header-inner">
-      <h1>When Might You Be Able to <span>FIRE</span>?</h1>
+      <div class="title-group" id="fireTitleGroup">
+        <img class="site-logo" src="./favicon.svg" alt="" width="36" height="36">
+        <h1 class="site-title">On the Road to <button class="fire-term" id="fireTerm" type="button" aria-label="FIRE: Financial Independence, Retire Early" aria-expanded="false"><span aria-hidden="true"><span class="fire-word">F<span class="fire-tail">inancial</span></span><span class="fire-word">I<span class="fire-tail">ndependence,</span></span><span class="fire-word">R<span class="fire-tail">etire</span></span><span class="fire-word">E<span class="fire-tail">arly</span></span></span></button></h1>
+      </div>
       <a class="github-link" href="https://github.com/jonfairbanks/fire-calc" target="_blank" rel="noopener noreferrer" aria-label="View on GitHub">
         <svg viewBox="0 0 16 16" aria-hidden="true">
           <path d="M8 0C3.58 0 0 3.67 0 8.2c0 3.62 2.29 6.7 5.47 7.79.4.08.55-.18.55-.4 0-.2-.01-.86-.01-1.56-2.01.38-2.53-.5-2.69-.96-.09-.24-.48-.97-.82-1.17-.28-.15-.68-.52-.01-.53.63-.01 1.08.59 1.23.84.72 1.24 1.87.89 2.33.68.07-.53.28-.89.51-1.1-1.78-.21-3.64-.91-3.64-4.04 0-.89.31-1.62.82-2.19-.08-.21-.36-1.04.08-2.16 0 0 .67-.22 2.2.84A7.43 7.43 0 0 1 8 3.96c.68 0 1.36.09 2 .28 1.53-1.06 2.2-.84 2.2-.84.44 1.12.16 1.95.08 2.16.51.57.82 1.3.82 2.19 0 3.14-1.87 3.83-3.65 4.04.29.26.54.75.54 1.52 0 1.1-.01 1.98-.01 2.25 0 .22.15.48.55.4A8.11 8.11 0 0 0 16 8.2C16 3.67 12.42 0 8 0Z"/>
@@ -816,12 +928,48 @@
     </div>
   </header>
 
+  <script>
+    (() => {
+      const group = document.getElementById("fireTitleGroup");
+      const button = document.getElementById("fireTerm");
+      let hovered = false;
+      let pinned = false;
+      let dismissed = false;
+      const update = () => {
+        const open = !dismissed && (hovered || pinned || document.activeElement === button);
+        button.setAttribute("aria-expanded", String(open));
+      };
+      const dismiss = () => { pinned = false; dismissed = true; update(); };
+      button.addEventListener("pointerenter", (event) => {
+        if (event.pointerType === "touch") return;
+        hovered = true;
+        dismissed = false;
+        update();
+      });
+      button.addEventListener("pointerleave", () => { hovered = false; update(); });
+      button.addEventListener("focus", () => { dismissed = false; update(); });
+      button.addEventListener("blur", () => { pinned = false; update(); });
+      button.addEventListener("click", () => {
+        pinned = !pinned;
+        dismissed = !pinned;
+        update();
+      });
+      document.addEventListener("pointerdown", (event) => {
+        if (!group.contains(event.target)) dismiss();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") dismiss();
+      });
+    })();
+  </script>
+
   <div class="layout">
     <aside class="sidebar">
       <section class="panel" aria-labelledby="details-title">
-        <h2 id="details-title">Your Details</h2>
+        <h2 id="details-title" class="jump-target" tabindex="-1">Your Details</h2>
+        <a class="mobile-plan-link" href="#projection-title">View Results ↓</a>
         <div class="plan-tools">
-          <p class="plan-status" id="planStatus" role="status">Valid inputs are kept for this tab.</p>
+          <p class="plan-status" id="planStatus" role="status">Your numbers stay on your device.</p>
           <button type="button" class="subtle-button" id="resetPlan">Reset Plan</button>
         </div>
 
@@ -866,7 +1014,7 @@
         <fieldset class="form-group">
           <legend>Growth Assumptions</legend>
           <div class="field">
-            <label id="growthRateLabel" for="portfolioGrowthRate">Portfolio Growth Rate</label>
+            <label id="growthRateLabel" for="portfolioGrowthRate">Portfolio Growth Rate (Before Inflation)</label>
             <div class="tier-row" id="growthTiers" role="group" aria-labelledby="growthRateLabel" aria-describedby="portfolioGrowthRateHint">
               <button class="tier" type="button" data-rate="0.03">Conservative 3%</button>
               <button class="tier" type="button" data-rate="0.06">Moderate 6%</button>
@@ -895,9 +1043,10 @@
           <div class="field" data-field="spendingGrowthRate">
             <label for="spendingGrowthRate">Real Spending Growth</label>
             <div class="input-wrap">
-              <input id="spendingGrowthRate" type="text" inputmode="decimal" autocomplete="off" aria-describedby="spendingGrowthRateError">
+              <input id="spendingGrowthRate" type="text" inputmode="decimal" autocomplete="off" aria-describedby="spendingGrowthRateHint spendingGrowthRateError">
               <span class="affix">%</span>
             </div>
+            <p class="helper-text" id="spendingGrowthRateHint">Extra spending growth beyond inflation. 0% keeps today’s lifestyle.</p>
             <p class="field-error hidden" id="spendingGrowthRateError" aria-live="polite"></p>
           </div>
 
@@ -910,7 +1059,7 @@
               <span class="affix">$</span>
               <input id="baristaIncome" type="text" inputmode="decimal" autocomplete="off" aria-describedby="baristaIncomeHint baristaIncomeError">
             </div>
-            <p class="helper-text" id="baristaIncomeHint">For Barista FIRE, in today's dollars.</p>
+            <p class="helper-text" id="baristaIncomeHint">In today's dollars.</p>
             <p class="field-error hidden" id="baristaIncomeError" aria-live="polite"></p>
           </div>
 
@@ -939,6 +1088,7 @@
             </div>
           </div>
         </fieldset>
+        <p class="sidebar-disclaimer">These are projections, not guarantees. Actual results may differ. This isn’t financial advice.</p>
       </section>
     </aside>
 
@@ -948,11 +1098,38 @@
           <h2 class="section-title">Current Plan</h2>
           <p class="input-notice hidden" id="inputNotice" role="alert"></p>
           <div class="snapshot-grid" id="snapshot"></div>
+          <p class="helper-text snapshot-income hidden" id="snapshotIncome"></p>
         </section>
 
         <section>
-          <h2 class="section-title">Portfolio Accumulation Projection</h2>
-          <p class="projection-note">Estimates when savings reach each target. The chart assumes you keep contributing and make no withdrawals, including after a milestone. It does not test how long your money would last in retirement. All projected amounts are in future dollars.</p>
+          <div class="projection-heading">
+            <h2 class="section-title jump-target" id="projection-title" tabindex="-1">Portfolio Projection</h2>
+            <a class="mobile-plan-link" href="#details-title">↑ Edit Plan</a>
+            <div class="tier-row" role="group" aria-label="Projection view">
+              <button type="button" class="tier selected" id="accumulationView" aria-pressed="true" aria-controls="projectionChart">Savings Targets</button>
+              <button type="button" class="tier" id="retirementView" aria-pressed="false" aria-controls="projectionChart">Retirement</button>
+            </div>
+          </div>
+          <div id="retirementControls" class="retirement-controls hidden">
+            <div class="field">
+              <label for="retirementAge">Retire at Age</label>
+              <input id="retirementAge" type="text" inputmode="numeric" autocomplete="off" aria-describedby="retirementAgeError">
+              <p class="field-error hidden" id="retirementAgeError" aria-live="polite"></p>
+            </div>
+            <div class="field">
+              <label for="projectionEndAge">Plan Until Age</label>
+              <input id="projectionEndAge" type="text" inputmode="numeric" autocomplete="off" aria-describedby="projectionEndAgeError">
+              <p class="field-error hidden" id="projectionEndAgeError" aria-live="polite"></p>
+            </div>
+            <div class="retirement-options">
+              <label class="check-row"><input id="retirementTodayDollars" type="checkbox" checked>Show Today’s Dollars</label>
+              <label class="check-row"><input id="retirementPartTimeEnabled" type="checkbox" aria-describedby="retirementPartTimeHint">Include Part-Time Income in Retirement</label>
+              <p class="helper-text hidden" id="retirementPartTimeHint"></p>
+            </div>
+          </div>
+          <p class="projection-note" id="projectionNote"></p>
+          <p class="input-notice hidden" id="retirementError" role="status"></p>
+          <div id="retirementSummary" class="retirement-summary hidden" aria-live="polite"></div>
           <div class="chart-box">
             <div class="chart-wrap">
               <canvas id="projectionChart" tabindex="0" aria-label="Portfolio accumulation projection. Use left and right arrow keys to explore years." aria-describedby="chartHint"></canvas>
@@ -960,12 +1137,15 @@
             <button type="button" id="clearChartSelection" class="subtle-button chart-dismiss hidden">Clear Chart Selection</button>
             <div class="legend" id="legend" role="group" aria-label="Emphasize a chart series"></div>
             <div class="chart-milestones" id="chartMilestones" role="group" aria-label="Milestones on the portfolio line"></div>
-            <p class="chart-hint" id="chartHint">Numbered markers show annual milestone checkpoints. Select a milestone to inspect it; milestones in the same year share a number.</p>
+            <div class="marker-detail-choices hidden" id="markerDetailChoices" role="group" aria-label="Details for milestones in this year"></div>
+            <p class="chart-hint" id="chartHint">Select a numbered marker to inspect that year and its FIRE details. Milestones in the same year share a number.</p>
           </div>
         </section>
 
+        <div id="savingsMilestones" class="stack">
         <section>
           <h2 class="section-title">FIRE Milestones</h2>
+          <p class="projection-note">Savings targets with continued contributions and no withdrawals.</p>
           <div class="milestone-navigation" aria-label="Milestone navigation">
             <button type="button" class="subtle-button" id="previousMilestone" aria-controls="milestonesMobile detail">Previous</button>
             <p class="milestone-position" id="milestonePosition"></p>
@@ -977,6 +1157,7 @@
 
         <p class="sr-only" id="milestoneStatus" role="status" aria-atomic="true"></p>
         <section class="detail" id="detail" aria-label="Selected Milestone Details"></section>
+        </div>
 
         <details class="assumptions-toggle">
           <summary class="section-title">Assumptions</summary>
@@ -998,7 +1179,11 @@
       baristaIncome: 35000,
       socialSecurityEnabled: false,
       socialSecurityAge: 67,
-      socialSecurityIncome: 20000
+      socialSecurityIncome: 20000,
+      retirementAge: 55,
+      projectionEndAge: 95,
+      retirementPartTimeEnabled: false,
+      retirementTodayDollars: true
     };
 
     const COLOR_BY_KEY = {
@@ -1026,6 +1211,7 @@
     let inputLoadWarning = "";
     let inputs = loadInputs();
     let selectedMilestone = "full";
+    let chartMode = "accumulation";
     let currentResult = null;
     let resizeRaf = 0;
     let customGrowthMode = !TIER_RATES.some((rate) => rate === inputs.portfolioGrowthRate);
@@ -1092,7 +1278,10 @@
     }
 
     function validateInputValue(id, value) {
-      if (id === "socialSecurityEnabled") return typeof value === "boolean" ? null : "Choose whether to include Social Security.";
+      if (typeof DEFAULT_INPUTS[id] === "boolean") return typeof value === "boolean" ? null : "Choose whether to include this option.";
+      if (id === "retirementAge" || id === "projectionEndAge") {
+        return Number.isInteger(value) && value >= 0 && value <= 200 ? null : "Enter a whole age from 0 to 200.";
+      }
       if (typeof value !== "number" || !Number.isFinite(value)) return "Enter a valid number.";
       if (id === "currentAge") {
         return Number.isInteger(value) && value >= 0 && value <= 120 ? null : "Enter a whole age from 0 to 120.";
@@ -1160,9 +1349,10 @@
         const draft = JSON.parse(raw);
         // A newly opened shared link must take precedence over an unrelated draft.
         if (draft?.sourceHash !== window.location.hash || !draft.inputs) return null;
-        if (Object.keys(DEFAULT_INPUTS).some((key) => validateInputValue(key, draft.inputs[key]))) return null;
+        const restored = { ...DEFAULT_INPUTS, ...draft.inputs };
+        if (Object.keys(DEFAULT_INPUTS).some((key) => validateInputValue(key, restored[key]))) return null;
         if (typeof draft.inputLoadWarning === "string") inputLoadWarning = draft.inputLoadWarning;
-        return Object.fromEntries(Object.keys(DEFAULT_INPUTS).map((key) => [key, draft.inputs[key]]));
+        return Object.fromEntries(Object.keys(DEFAULT_INPUTS).map((key) => [key, restored[key]]));
       } catch {
         draftStorageAvailable = false;
         return null;
@@ -1176,7 +1366,7 @@
       } catch {
         draftStorageAvailable = false;
       }
-      const message = draftStorageAvailable ? "Valid inputs are kept for this tab."
+      const message = draftStorageAvailable ? "Your numbers stay on your device."
         : "Tab storage is unavailable. Refresh will reset this plan.";
       const status = document.getElementById("planStatus");
       if (status.textContent !== message) status.textContent = message;
@@ -1190,6 +1380,7 @@
       inputLoadWarning = "";
       customGrowthMode = false;
       selectedMilestone = "full";
+      chartMode = "accumulation";
       chartHoverIndex = null;
       chartTouchSelected = false;
       render(true);
@@ -1331,7 +1522,7 @@
     function buildCoastMilestone(input, targetAge, color) {
       const yearsAway = findCoastFireYear(input, targetAge);
       const milestone = buildMilestone(input, `coast${targetAge}`, `Coast FIRE · ${targetAge}`,
-        `Stop contributing, target age ${targetAge}`, "", color, yearsAway, null);
+        `Stop contributing, target age ${targetAge}`, `Coast FIRE means letting your existing investments grow toward retirement at ${targetAge}, while other income covers today's bills.`, color, yearsAway, null);
       milestone.retirementAge = targetAge;
       milestone.coastTargetNumber = null;
       milestone.retirementTargetNumber = null;
@@ -1355,28 +1546,21 @@
       if (yearsToRetirement === 0) {
         milestone.description = `Retirement target reached at ${targetAge}`;
         const timing = yearsAway === 0
-          ? `Your current portfolio meets the retirement target at age ${targetAge}.`
-          : `Keep contributing $${formatWithCommas(input.monthlyInvesting)}/month until age ${targetAge}, when you reach the retirement target.`;
-        const resolutionNote = yearsAway > 0 ? " We check once a year, so a shorter coasting period may fall between checks." : "";
-        milestone.formula = `${timing} There is no separate coasting period in this projection.${resolutionNote}`;
+          ? "Your current portfolio meets the retirement target."
+          : `Keep contributing $${formatWithCommas(input.monthlyInvesting)}/month until age ${targetAge} to reach the retirement target.`;
+        milestone.formula = `${timing} There’s no separate coasting period.`;
         milestone.shortFormula = "No separate coasting period projected.";
         return milestone;
       }
       const timing = yearsAway === 0
-        ? "Your savings already meet the coast target."
-        : `Keep contributing $${formatWithCommas(input.monthlyInvesting)}/month until age ${milestone.age} to reach the coast target.`;
-      milestone.formula = `${timing} Then leave the money invested, with no further contributions or withdrawals. At ${formatPercent(input.portfolioGrowthRate)}% annual growth before inflation, it could reach your retirement target at ${targetAge}. Cover living costs with other income until then.`;
+        ? "You could stop saving for retirement now."
+        : `At age ${milestone.age}, you could stop saving for retirement.`;
+      milestone.formula = `${timing} Leave investments untouched until ${targetAge} and cover living costs with other income.`;
       milestone.shortFormula = `Reach the coast balance, then let it grow without contributions or withdrawals until age ${targetAge}.`;
       return milestone;
     }
 
     function calculateMilestones(input) {
-      const growthPct = formatPercent(input.portfolioGrowthRate);
-      const spendGrowthPct = formatPercent(totalSpendingGrowthRate(input), 2);
-      const ssNote = input.socialSecurityEnabled
-        ? ` Your Social Security estimate (${fmt(input.socialSecurityIncome)}/year in today's dollars) rises with inflation and lowers the target from age ${input.socialSecurityAge}.`
-        : "";
-
       return [
         buildCoastMilestone(input, 65, "#89b8bd"),
         buildCoastMilestone(input, 55, "#cbc397"),
@@ -1385,7 +1569,7 @@
           "barista",
           "Barista FIRE",
           "Part-time covers gap",
-          `Your target is 25× the spending left after part-time income of ${fmt(input.baristaIncome)}/year in today's dollars. Assumes that income keeps pace with inflation and continues throughout retirement.${ssNote}`,
+          "Trade full-time work for part-time income, with investments covering the rest of your spending.",
           "#a9a0d5",
           findBaristaFireYear(input),
           null,
@@ -1396,7 +1580,7 @@
           "full",
           "Full FIRE",
           "25x spending target",
-          `Your target is 25× the annual spending your investments need to cover—a 4% starting withdrawal rate. Assumes ${growthPct}% yearly portfolio growth and ${spendGrowthPct}% yearly spending growth.${ssNote}`,
+          "A starting point for leaving your day job: 25× the yearly spending your investments need to cover.",
           COLOR_BY_KEY.fireNumber,
           findCrossoverYear(input, 25),
           25,
@@ -1407,7 +1591,7 @@
           "chubby",
           "Chubby FIRE",
           "33x spending target",
-          `Your target is 33× the annual spending your investments need to cover—about a 3% starting withdrawal rate. This adds a larger cushion to the same spending plan.${ssNote}`,
+          "Retire with an upper-middle-class lifestyle, including travel, hobbies, and occasional luxuries.",
           "#c4af86",
           findCrossoverYear(input, 33),
           33,
@@ -1418,7 +1602,7 @@
           "fat",
           "Fat FIRE",
           "50x spending target",
-          `Your target is 50× the annual spending your investments need to cover—a 2% starting withdrawal rate. This adds a larger cushion; your spending budget stays the same.${ssNote}`,
+          "Retire with an affluent lifestyle and plenty of room to spend on what you enjoy.",
           "#bb9296",
           findCrossoverYear(input, 50),
           50,
@@ -1448,6 +1632,58 @@
       return rows;
     }
 
+    function buildRetirementProjection(input) {
+      const retirementAge = input.retirementAge ?? DEFAULT_INPUTS.retirementAge;
+      const endAge = input.projectionEndAge ?? DEFAULT_INPUTS.projectionEndAge;
+      if (!Number.isInteger(retirementAge) || !Number.isInteger(endAge)
+          || retirementAge < input.currentAge || endAge <= retirementAge || endAge > 200) {
+        return { rows: [], error: retirementAge < input.currentAge
+          ? `Choose a retirement age of ${input.currentAge} or later.`
+          : "Plan through an age later than your retirement age (up to 200)." };
+      }
+      const retirementYear = retirementAge - input.currentAge;
+      const monthRate = Math.expm1(Math.log1p(input.portfolioGrowthRate) / 12);
+      const currentYear = new Date().getFullYear();
+      const cashFlow = (years) => {
+        const age = input.currentAge + years;
+        const annualSpending = spendingAtYear(input, years);
+        const socialSecurity = age >= input.socialSecurityAge ? socialSecurityIncomeAtYear(input, years) : 0;
+        const partTime = input.retirementPartTimeEnabled ? baristaIncomeAtYear(input, years) : 0;
+        const annualIncome = socialSecurity + partTime;
+        return { annualSpending, annualIncome, annualWithdrawal: Math.max(0, annualSpending - annualIncome) };
+      };
+      let balance = input.currentInvestments;
+      let depletionAge = null;
+      let totalShortfall = 0;
+      const rows = [];
+      for (let years = 0; years <= endAge - input.currentAge; years += 1) {
+        if (years <= retirementYear) {
+          balance = portfolioAtYear(input, years);
+        } else {
+          // Each age-year uses its starting spending/income; withdrawals occur at month end.
+          const monthlyNeed = cashFlow(years - 1).annualWithdrawal / 12;
+          for (let month = 1; month <= 12; month += 1) {
+            const available = balance * (1 + monthRate);
+            const shortfall = Math.max(0, monthlyNeed - available);
+            if (shortfall > 1e-7 && depletionAge === null) {
+              depletionAge = input.currentAge + years - 1 + month / 12;
+            }
+            totalShortfall += shortfall;
+            balance = Math.max(0, available - monthlyNeed);
+          }
+        }
+        const age = input.currentAge + years;
+        const retired = age >= retirementAge;
+        const flow = cashFlow(years);
+        rows.push({ year: currentYear + years, age, portfolioValue: balance,
+          ...flow, annualIncome: retired ? flow.annualIncome : 0,
+          annualWithdrawal: retired ? flow.annualWithdrawal : 0,
+          phase: retired ? "retired" : "saving", cumulativeShortfall: totalShortfall });
+      }
+      return { rows, retirementAge, endAge, retirementBalance: rows[retirementYear].portfolioValue,
+        endingBalance: balance, depletionAge, totalShortfall, error: null };
+    }
+
     function calculate(input) {
       const milestones = calculateMilestones(input);
       const fireYears = milestones.map((m) => m.yearsAway).filter((y) => y !== null);
@@ -1466,14 +1702,16 @@
         },
         milestones,
         projection,
+        retirement: buildRetirementProjection(input),
         assumptions: {
+          targets: "Full FIRE uses 25× the spending left after enabled Social Security. Barista FIRE also subtracts part-time income. For Chubby and Fat, we use 33× and 50× that spending need as planning targets. Increase Annual Spending to reflect the lifestyle you want.",
           spending: `Starts at ${fmt(input.annualSpending)}/year in today's dollars. Rises ${spendingGrowthPct}% each year, combining ${inflationPct}% inflation with ${realSpendingGrowthPct}% real spending growth.`,
-          contributions: `$${formatWithCommas(input.monthlyInvesting)} added at the end of each month, with no yearly increase. The chart assumes you keep contributing. Each milestone is a separate path: you contribute until that date.`,
+          contributions: `$${formatWithCommas(input.monthlyInvesting)}/month, with no yearly increase. Contributions stop at your chosen retirement age in the Retirement view. Savings Targets and each milestone assume you keep contributing until that target.`,
           returnRate: `${growthPct}% every year, before inflation. Market ups and downs aren't included.`,
           startingPortfolio: `${fmt(input.currentInvestments)} invested today.`,
-          horizon: `We check milestones yearly for up to 60 years, and Coast FIRE up to its target age. The chart runs through ${projection[projection.length - 1].year}. “Not Reached” means no match in that time.`,
-          retirement: "This calculator doesn’t model retirement withdrawals or show how long your savings would last. Include taxes and healthcare in spending, and allow for fees in your return. Account-access rules aren’t included.",
-          income: "Income amounts rise with inflation. Part-time income is assumed to continue indefinitely. Social Security lowers the spending target from your chosen claiming age. Enter a benefit estimate that reflects when you stop work and claim benefits; this calculator doesn’t work that out or test how you fund the years before benefits start."
+          horizon: `Retirement runs from age ${input.retirementAge} until you turn ${input.projectionEndAge}. Milestones are checked yearly for up to 60 years, with Coast FIRE limited to its target age. “Not Reached” means no match in that window.`,
+          retirement: "After retirement, monthly withdrawals cover spending left after income. Spending still rises each year. Returns are applied before each month-end contribution or withdrawal. Include taxes and healthcare in spending, and allow for fees in your return. RMDs and account-access rules aren't modeled.",
+          income: "Income rises with inflation. Enabled Social Security starts at your claiming age; use an estimate that reflects when you stop work and claim. Part-time income continues throughout retirement when selected. Surplus income isn't reinvested."
         }
       };
     }
@@ -1490,7 +1728,9 @@
         if (typeof inputs[key] === "boolean") return;
         setInputText(key, inputs[key], force);
       });
-      document.getElementById("socialSecurityEnabled").checked = inputs.socialSecurityEnabled;
+      for (const key of Object.keys(DEFAULT_INPUTS).filter((key) => typeof DEFAULT_INPUTS[key] === "boolean")) {
+        document.getElementById(key).checked = inputs[key];
+      }
       document.getElementById("ssFields").classList.toggle("hidden", !inputs.socialSecurityEnabled);
 
       document.getElementById("customGrowthWrap").classList.toggle("hidden", !customGrowthMode);
@@ -1506,8 +1746,12 @@
         ["Investments", fmt(snapshot.currentInvestments)],
         ["Spending", fmt(snapshot.annualSpending)],
         ["Monthly Contribution", "$" + formatWithCommas(snapshot.monthlyInvesting)],
-        ["Annual Part-Time Income", fmt(snapshot.baristaIncome) + "/yr"]
+        ["Annual Part-Time Income", chartMode === "retirement" && !inputs.retirementPartTimeEnabled
+          ? "Excluded" : fmt(snapshot.baristaIncome) + "/yr"]
       ];
+      const income = document.getElementById("snapshotIncome");
+      income.classList.toggle("hidden", chartMode !== "retirement");
+      income.textContent = `Retirement income (today’s dollars): ${inputs.retirementPartTimeEnabled ? `part-time ${fmt(snapshot.baristaIncome)}/yr until age ${inputs.projectionEndAge}` : "part-time excluded"}; ${inputs.socialSecurityEnabled ? `Social Security ${fmt(inputs.socialSecurityIncome)}/yr from age ${inputs.socialSecurityAge}` : "Social Security excluded"}.`;
       document.getElementById("snapshot").innerHTML = rows.map(([label, value]) => `
         <div class="card">
           <p class="stat-label">${escapeHtml(label)}</p>
@@ -1589,6 +1833,12 @@
 
     function selectMilestone(type) {
       selectedMilestone = type;
+      if (chartMode === "accumulation" && currentResult) {
+        const milestone = currentResult.milestones.find((item) => item.type === type);
+        const index = currentResult.projection.findIndex((row) => row.year === milestone?.year);
+        chartHoverIndex = index < 0 ? null : index;
+        chartTouchSelected = index >= 0;
+      }
       trackAnalyticsEvent("milestone_selected", { milestone_type: type });
       render();
     }
@@ -1630,6 +1880,7 @@
             <h2>${escapeHtml(milestone.label)} Details</h2>
           </div>
           <p class="detail-copy">${escapeHtml(unreachableMilestoneCopy(milestone))}</p>
+          ${milestone.status !== "notApplicable" ? `<p class="detail-copy">${escapeHtml(milestone.formula)}</p>` : ""}
           ${shortfall ? `
           <div class="detail-grid">
             <div>
@@ -1688,12 +1939,13 @@
             <p class="detail-subcopy">Future dollars at age ${milestone.retirementAge}</p>
           </div>` : ""}
         </div>
-        <p class="detail-copy">Balances are in future dollars. This estimate doesn’t show how long your savings would last in retirement.</p>
+        <p class="detail-copy">Balances are in future dollars. Use the Retirement chart to explore withdrawals after your chosen retirement age.</p>
       `;
     }
 
     function renderAssumptions(assumptions) {
       document.getElementById("assumptions").innerHTML = `
+        <dl class="assumption-item"><dt>FIRE Targets</dt><dd>${escapeHtml(assumptions.targets)}</dd></dl>
         <dl class="assumption-item"><dt>Spending</dt><dd>${escapeHtml(assumptions.spending)}</dd></dl>
         <dl class="assumption-item"><dt>Contributions</dt><dd>${escapeHtml(assumptions.contributions)}</dd></dl>
         <dl class="assumption-item"><dt>Return</dt><dd>${escapeHtml(assumptions.returnRate)}</dd></dl>
@@ -1704,26 +1956,114 @@
       `;
     }
 
+    function activeProjection() {
+      if (!currentResult) return [];
+      if (chartMode === "accumulation") return currentResult.projection;
+      const projection = currentResult.retirement.rows.map((row) => {
+        const scale = inputs.retirementTodayDollars ? Math.pow(1 + inputs.inflationRate, row.age - inputs.currentAge) : 1;
+        return { ...row, portfolioValue: row.portfolioValue / scale,
+          annualSpending: row.annualSpending / scale, annualIncome: row.annualIncome / scale,
+          annualWithdrawal: row.annualWithdrawal / scale };
+      });
+      return projection.every((row) => [row.portfolioValue, row.annualSpending, row.annualIncome, row.annualWithdrawal].every(Number.isFinite)) ? projection : [];
+    }
+
+    function activeSeries() {
+      return chartMode === "retirement" ? [["portfolioValue", "Portfolio Balance"]] : SERIES;
+    }
+
+    function renderProjection() {
+      const retirement = chartMode === "retirement";
+      const result = currentResult.retirement;
+      document.getElementById("savingsMilestones").classList.toggle("hidden", retirement);
+      const incomeHint = document.getElementById("retirementPartTimeHint");
+      incomeHint.classList.toggle("hidden", !inputs.retirementPartTimeEnabled);
+      incomeHint.textContent = `Continues until age ${inputs.projectionEndAge}.`;
+      renderSnapshot(currentResult.snapshot);
+      const projection = activeProjection();
+      const projectionError = retirement ? result.error || (!projection.length
+        ? "These rates exceed the chart’s range in today’s dollars. Try future dollars or adjust the rates." : "") : "";
+      document.getElementById("retirementControls").classList.toggle("hidden", !retirement);
+      document.getElementById("retirementSummary").classList.toggle("hidden", !retirement || Boolean(projectionError));
+      for (const [id, mode] of [["retirementView", "retirement"], ["accumulationView", "accumulation"]]) {
+        document.getElementById(id).setAttribute("aria-pressed", String(chartMode === mode));
+        document.getElementById(id).classList.toggle("selected", chartMode === mode);
+      }
+      const basis = inputs.retirementTodayDollars ? "today’s dollars" : "future dollars";
+      document.getElementById("projectionNote").textContent = retirement
+        ? `Contributions stop at retirement. Savings then cover spending after ${inputs.retirementPartTimeEnabled ? "part-time income and any " : "any "}Social Security. Balances are in ${basis}; they can rise if growth exceeds withdrawals.`
+        : "Find when savings reach each FIRE target. This view keeps contributions going, with no withdrawals. Amounts are in future dollars.";
+      document.getElementById("chartHint").textContent = retirement
+        ? "Assumes steady returns. Taxes, fees, RMDs, and market swings aren’t modeled."
+        : "Select a numbered marker to inspect that year and its FIRE details. Milestones in the same year share a number.";
+      const error = document.getElementById("retirementError");
+      error.textContent = projectionError;
+      error.classList.toggle("hidden", !error.textContent);
+      document.getElementById("projectionChart").parentElement.classList.toggle("hidden", Boolean(error.textContent));
+      if (retirement && !projectionError) {
+        const retirementRow = projection.find((row) => row.age === result.retirementAge);
+        const endingRow = projection[projection.length - 1];
+        const coverage = result.depletionAge === null ? `To Age ${result.endAge}` : `Shortfall at Age ${Number(result.depletionAge.toFixed(1))}`;
+        document.getElementById("retirementSummary").innerHTML = `
+          <div><p class="stat-label">At Retirement · Age ${result.retirementAge}</p><p class="stat-value">${fmt(retirementRow.portfolioValue)}</p><p class="helper-text">${escapeHtml(basis)}</p></div>
+          <div><p class="stat-label">Balance at Age ${result.endAge}</p><p class="stat-value">${fmt(endingRow.portfolioValue)}</p><p class="helper-text">${escapeHtml(basis)}</p></div>
+          <div><p class="stat-label">Spending Covered</p><p class="stat-value${result.depletionAge === null ? "" : " shortfall-value"}">${coverage}</p><p class="helper-text">${result.depletionAge === null ? "Under these assumptions" : "Savings cannot cover the full withdrawal"}</p></div>`;
+      }
+      renderChartMilestones(projection);
+      renderLegend();
+      drawChart(projection);
+    }
+
     function chartPadding(width) {
       return { top: 16, right: 18, bottom: 30, left: width < 480 ? 52 : 62 };
     }
 
     function chartMilestoneGroups(projection) {
+      if (chartMode === "retirement" && projection.length && projection[0].phase) {
+        const events = [["Retirement", currentResult.retirement.retirementAge]];
+        if (inputs.socialSecurityEnabled && inputs.socialSecurityAge >= currentResult.retirement.retirementAge) {
+          events.push(["Social Security Starts", inputs.socialSecurityAge]);
+        }
+        if (currentResult.retirement.depletionAge !== null) {
+          events.push([`Withdrawal Shortfall · Age ${Number(currentResult.retirement.depletionAge.toFixed(1))}`, Math.ceil(currentResult.retirement.depletionAge)]);
+        }
+        const groups = new Map();
+        for (const [label, age] of events) {
+          const index = projection.findIndex((row) => row.age === age);
+          if (index < 0) continue;
+          if (!groups.has(index)) groups.set(index, { index, row: projection[index], labels: [] });
+          groups.get(index).labels.push(label);
+        }
+        return [...groups.values()].sort((a, b) => a.index - b.index);
+      }
       const definitions = [
-        ["First $1M", (row) => row.portfolioValue >= 1000000],
-        ["Barista FIRE", (row) => row.portfolioValue >= row.baristaFireNumber],
-        ["Full FIRE", (row) => row.portfolioValue >= row.fireNumber],
-        ["Chubby FIRE", (row) => row.portfolioValue >= row.chubbyFireNumber],
-        ["Fat FIRE", (row) => row.portfolioValue >= row.fatFireNumber]
+        ["First $1M", (row) => row.portfolioValue >= 1000000, null],
+        ["Barista FIRE", (row) => row.portfolioValue >= row.baristaFireNumber, "barista"],
+        ["Full FIRE", (row) => row.portfolioValue >= row.fireNumber, "full"],
+        ["Chubby FIRE", (row) => row.portfolioValue >= row.chubbyFireNumber, "chubby"],
+        ["Fat FIRE", (row) => row.portfolioValue >= row.fatFireNumber, "fat"]
       ];
       const groups = new Map();
-      for (const [label, qualifies] of definitions) {
+      for (const [label, qualifies, type] of definitions) {
         const index = projection.findIndex(qualifies);
         if (index === -1) continue;
-        if (!groups.has(index)) groups.set(index, { index, row: projection[index], labels: [] });
+        if (!groups.has(index)) groups.set(index, { index, row: projection[index], labels: [], types: [] });
         groups.get(index).labels.push(label);
+        if (type) groups.get(index).types.push(type);
       }
       return [...groups.values()].sort((a, b) => a.index - b.index);
+    }
+
+    function selectChartMilestone(rowIndex) {
+      const group = chartMilestoneGroups(activeProjection()).find((item) => item.index === rowIndex);
+      chartHoverIndex = rowIndex;
+      chartTouchSelected = true;
+      if (chartMode === "accumulation" && group?.types?.length) {
+        selectMilestone(group.types.at(-1));
+        revealSelectedMilestone();
+      } else {
+        drawChart(activeProjection());
+      }
     }
 
     function renderChartMilestones(projection) {
@@ -1736,13 +2076,10 @@
           button = document.createElement("button");
           button.type = "button";
           button.className = "chart-milestone";
-          button.setAttribute("aria-controls", "projectionChart");
+          button.setAttribute("aria-controls", "projectionChart detail");
           button.addEventListener("click", () => {
             const rowIndex = Number(button.dataset.index);
-            if (chartTouchSelected && chartHoverIndex === rowIndex) { clearChartHover(); return; }
-            chartHoverIndex = rowIndex;
-            chartTouchSelected = true;
-            drawChart(currentResult.projection);
+            selectChartMilestone(rowIndex);
           });
           container.append(button);
         }
@@ -1754,16 +2091,48 @@
       while (container.children.length > groups.length) container.lastElementChild.remove();
     }
 
+    function renderMarkerDetailChoices(projection) {
+      const choices = document.getElementById("markerDetailChoices");
+      const activeGroup = chartMode === "accumulation" && chartTouchSelected
+        ? chartMilestoneGroups(projection).find((group) => group.index === chartHoverIndex) : null;
+      const types = activeGroup?.types?.length > 1 ? activeGroup.types : [];
+      choices.classList.toggle("hidden", !types.length);
+      const key = types.join(",");
+      if (choices.dataset.types !== key) {
+        choices.dataset.types = key;
+        choices.innerHTML = types.length ? `<span></span>` + types.map((type) => {
+          const milestone = currentResult.milestones.find((item) => item.type === type);
+          return `<button type="button" class="tier" data-type="${type}" aria-controls="detail">${escapeHtml(milestone.label)}</button>`;
+        }).join("") : "";
+        choices.querySelectorAll("button").forEach((button) => button.addEventListener("click", () => selectMilestone(button.dataset.type)));
+      }
+      if (types.length) choices.querySelector("span").textContent = `Details for ${activeGroup.row.year}:`;
+      choices.querySelectorAll("button").forEach((button) => {
+        button.classList.toggle("selected", button.dataset.type === selectedMilestone);
+        button.setAttribute("aria-pressed", String(button.dataset.type === selectedMilestone));
+      });
+    }
+
     function drawChart(projection) {
+      renderMarkerDetailChoices(projection);
+      const series = activeSeries();
       const canvas = document.getElementById("projectionChart");
+      if (!projection.length) {
+        chartHoverIndex = null;
+        chartTouchSelected = false;
+        canvas.removeAttribute("data-hover-year");
+        document.getElementById("clearChartSelection").classList.add("hidden");
+        return;
+      }
       if (chartHoverIndex !== null) chartHoverIndex = Math.min(chartHoverIndex, projection.length - 1);
       const activeRow = chartHoverIndex === null ? null : projection[chartHoverIndex];
       if (activeRow) canvas.dataset.hoverYear = String(activeRow.year);
       else canvas.removeAttribute("data-hover-year");
       document.getElementById("clearChartSelection").classList.toggle("hidden", !chartTouchSelected || !activeRow);
       canvas.setAttribute("aria-label", activeRow
-        ? `Year ${activeRow.year}, age ${activeRow.age}. ${SERIES.map(([key, label]) => `${label}: ${formatWholeDollars(activeRow[key])}`).join(". ")}. Use left and right arrow keys to explore years.`
-        : "Portfolio accumulation projection. Use left and right arrow keys to explore years.");
+        ? `Year ${activeRow.year}, age ${activeRow.age}. ${series.map(([key, label]) => `${label}: ${formatWholeDollars(activeRow[key])}`).join(". ")}.${chartMode === "retirement"
+          ? ` ${inputs.retirementTodayDollars ? "Today's dollars" : "Future dollars"}. ${activeRow.phase === "saving" ? "Contributing." : `Retired. Annual spending: ${formatWholeDollars(activeRow.annualSpending)}. Other income: ${formatWholeDollars(activeRow.annualIncome)}. Annual amount needed from savings: ${formatWholeDollars(activeRow.annualWithdrawal)}.`}` : ""} Use left and right arrow keys to explore years.`
+        : `${chartMode === "retirement" ? "Portfolio through retirement" : "Portfolio accumulation projection"}. Use left and right arrow keys to explore years.`);
       const rect = canvas.getBoundingClientRect();
       const ratio = window.devicePixelRatio || 1;
       canvas.width = Math.max(1, Math.floor(rect.width * ratio));
@@ -1775,7 +2144,7 @@
       const width = rect.width;
       const height = rect.height;
       const emphasizedKey = chartHighlightKey || chartPinnedKey;
-      const allValues = projection.flatMap((row) => SERIES.map(([key]) => row[key]));
+      const allValues = projection.flatMap((row) => series.map(([key]) => row[key]));
       const maxValue = Math.max(...allValues, 1);
       const minYear = projection[0].year;
       const maxYear = projection[projection.length - 1].year;
@@ -1817,10 +2186,22 @@
       const xTicks = width < 480 ? 3 : 5;
       for (let i = 0; i <= xTicks; i += 1) {
         const year = Math.round(minYear + ((maxYear - minYear) / xTicks) * i);
-        ctx.fillText(String(year), x(year), height - padding.bottom + 10);
+        ctx.fillText(chartMode === "retirement" ? `Age ${inputs.currentAge + year - minYear}` : String(year), x(year), height - padding.bottom + 10);
       }
 
-      SERIES.forEach(([key], seriesIndex) => {
+      if (chartMode === "retirement") {
+        const retirementRow = projection.find((row) => row.age === currentResult.retirement.retirementAge);
+        if (retirementRow) {
+          const startX = x(retirementRow.year);
+          ctx.fillStyle = "rgba(114, 212, 176, 0.035)";
+          ctx.fillRect(startX, padding.top, width - padding.right - startX, plotH);
+          ctx.strokeStyle = "#527d6e";
+          ctx.setLineDash([3, 5]);
+          ctx.beginPath(); ctx.moveTo(startX, padding.top); ctx.lineTo(startX, padding.top + plotH); ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      }
+      series.forEach(([key], seriesIndex) => {
         ctx.beginPath();
         ctx.strokeStyle = COLOR_BY_KEY[key];
         const isHighlighted = emphasizedKey === null || emphasizedKey === key;
@@ -1899,7 +2280,7 @@
         ctx.stroke();
         ctx.setLineDash([]);
 
-        SERIES.forEach(([key]) => {
+        series.forEach(([key]) => {
           const pointY = y(hoverRow[key]);
           ctx.beginPath();
           ctx.fillStyle = COLOR_BY_KEY[key];
@@ -1913,8 +2294,17 @@
         drawMarkerBadges();
         const tooltipLines = [
           `Year ${hoverRow.year} · Age ${hoverRow.age}`,
-          ...SERIES.map(([key, label]) => `${label}: ${fmt(hoverRow[key])}`),
-          ...markerGroups.filter((group) => group.index === chartHoverIndex).flatMap((group) => group.labels.map((label) => `${label} reached`)),
+          ...series.map(([key, label]) => `${label}: ${fmt(hoverRow[key])}`),
+          ...(chartMode === "retirement" ? [
+            hoverRow.phase === "saving" ? "Contributing" : "Retired · contributions stopped",
+            ...(hoverRow.phase === "retired" ? [
+              `Annual spending: ${fmt(hoverRow.annualSpending)}`,
+              `Other income: ${fmt(hoverRow.annualIncome)}`,
+              `Needed from savings: ${fmt(hoverRow.annualWithdrawal)}`
+            ] : []),
+            inputs.retirementTodayDollars ? "Today’s dollars" : "Future dollars"
+          ] : []),
+          ...markerGroups.filter((group) => group.index === chartHoverIndex).flatMap((group) => group.labels.map((label) => chartMode === "retirement" ? label : `${label} reached`)),
         ];
         ctx.font = "12px -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif";
         const lineHeight = 17;
@@ -1942,7 +2332,7 @@
     }
 
     function updateChartHover(event) {
-      if (!currentResult?.projection?.length) return;
+      if (!activeProjection().length) return;
       const canvas = document.getElementById("projectionChart");
       const rect = canvas.getBoundingClientRect();
       const padding = { left: Number(canvas.dataset.plotLeft), right: Number(canvas.dataset.plotRight) };
@@ -1951,13 +2341,13 @@
       if (pointerX < padding.left || pointerX > rect.width - padding.right) {
         chartHoverIndex = null;
         canvas.removeAttribute("data-hover-year");
-        drawChart(currentResult.projection);
+        drawChart(activeProjection());
         return;
       }
-      const index = Math.round(((pointerX - padding.left) / plotW) * (currentResult.projection.length - 1));
-      chartHoverIndex = Math.max(0, Math.min(currentResult.projection.length - 1, index));
-      canvas.dataset.hoverYear = String(currentResult.projection[chartHoverIndex].year);
-      drawChart(currentResult.projection);
+      const index = Math.round(((pointerX - padding.left) / plotW) * (activeProjection().length - 1));
+      chartHoverIndex = Math.max(0, Math.min(activeProjection().length - 1, index));
+      canvas.dataset.hoverYear = String(activeProjection()[chartHoverIndex].year);
+      drawChart(activeProjection());
     }
 
     function clearChartHover() {
@@ -1965,13 +2355,18 @@
       if (chartHoverIndex === null) return;
       document.getElementById("projectionChart").removeAttribute("data-hover-year");
       chartHoverIndex = null;
-      if (currentResult) drawChart(currentResult.projection);
+      if (currentResult) {
+        renderChartMilestones(activeProjection());
+        drawChart(activeProjection());
+      }
     }
 
     function renderLegend() {
       const legend = document.getElementById("legend");
-      if (legend.children.length) return;
-      legend.innerHTML = SERIES.map(([key, label]) => `
+      legend.classList.toggle("hidden", chartMode === "retirement");
+      if (legend.dataset.mode === chartMode && legend.children.length) return;
+      legend.dataset.mode = chartMode;
+      legend.innerHTML = activeSeries().map(([key, label]) => `
         <button type="button" class="legend-item" data-series="${escapeHtml(key)}" aria-pressed="false" style="color:${COLOR_BY_KEY[key]}">
           <span class="legend-swatch" aria-hidden="true"></span>
           <span class="legend-label">${escapeHtml(label)}</span>
@@ -1980,11 +2375,11 @@
       legend.querySelectorAll(".legend-item").forEach((item) => {
         const preview = () => {
           chartHighlightKey = item.dataset.series;
-          if (currentResult) drawChart(currentResult.projection);
+          if (currentResult) drawChart(activeProjection());
         };
         const restore = () => {
           chartHighlightKey = null;
-          if (currentResult) drawChart(currentResult.projection);
+          if (currentResult) drawChart(activeProjection());
         };
         item.addEventListener("mouseenter", preview);
         item.addEventListener("mouseleave", restore);
@@ -1996,7 +2391,7 @@
           legend.querySelectorAll(".legend-item").forEach((button) => {
             button.setAttribute("aria-pressed", String(button.dataset.series === chartPinnedKey));
           });
-          if (currentResult) drawChart(currentResult.projection);
+          if (currentResult) drawChart(activeProjection());
         });
       });
     }
@@ -2009,20 +2404,17 @@
         selectedMilestone = "full";
       }
       const selected = currentResult.milestones.find((m) => m.type === selectedMilestone) || currentResult.milestones[3];
-      renderSnapshot(currentResult.snapshot);
       renderMilestones(currentResult.milestones);
       renderDetail(selected);
       syncMilestoneNavigation();
       savePlanDraft();
       renderAssumptions(currentResult.assumptions);
-      renderChartMilestones(currentResult.projection);
-      drawChart(currentResult.projection);
-      renderLegend();
+      renderProjection();
     }
 
     function renderInputErrors() {
       for (const id of Object.keys(DEFAULT_INPUTS)) {
-        if (id === "socialSecurityEnabled") continue;
+        if (typeof DEFAULT_INPUTS[id] === "boolean") continue;
         const message = inputErrors[id] || "";
         const el = document.getElementById(id);
         el.setAttribute("aria-invalid", String(Boolean(message)));
@@ -2065,7 +2457,7 @@
     }
 
     Object.keys(DEFAULT_INPUTS)
-      .filter((key) => key !== "socialSecurityEnabled")
+      .filter((key) => typeof DEFAULT_INPUTS[key] !== "boolean")
       .forEach(bindTextField);
 
     document.getElementById("socialSecurityEnabled").addEventListener("change", (event) => {
@@ -2077,6 +2469,24 @@
       trackAnalyticsEvent("calculator_input_updated", { field_name: "socialSecurityEnabled" });
       render();
     });
+
+    for (const id of ["retirementPartTimeEnabled", "retirementTodayDollars"]) {
+      document.getElementById(id).addEventListener("change", (event) => {
+        inputs[id] = event.currentTarget.checked;
+        render();
+      });
+    }
+    for (const [id, mode] of [["retirementView", "retirement"], ["accumulationView", "accumulation"]]) {
+      document.getElementById(id).addEventListener("click", () => {
+        chartMode = mode;
+        chartHoverIndex = null;
+        chartTouchSelected = false;
+        chartHighlightKey = null;
+        chartPinnedKey = null;
+        renderProjection();
+        syncMilestoneNavigation();
+      });
+    }
 
     document.querySelectorAll("#growthTiers .tier").forEach((button) => {
       button.addEventListener("click", () => {
@@ -2091,6 +2501,15 @@
         inputs.portfolioGrowthRate = Number(button.dataset.rate);
         trackAnalyticsEvent("calculator_input_updated", { field_name: "portfolioGrowthRate" });
         render();
+      });
+    });
+
+    document.querySelectorAll(".mobile-plan-link").forEach((link) => {
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        const target = document.getElementById(link.getAttribute("href").slice(1));
+        target.focus({ preventScroll: true });
+        target.scrollIntoView({ block: "start", behavior: "instant" });
       });
     });
 
@@ -2120,15 +2539,15 @@
       if (!chartTouchSelected) clearChartHover();
     });
     chartCanvas.addEventListener("keydown", (event) => {
-      if (!["ArrowLeft", "ArrowRight", "Home", "End", "Escape"].includes(event.key) || !currentResult) return;
+      if (!["ArrowLeft", "ArrowRight", "Home", "End", "Escape"].includes(event.key) || !currentResult || !activeProjection().length) return;
       event.preventDefault();
       if (event.key === "Escape") { clearChartHover(); return; }
-      const lastIndex = currentResult.projection.length - 1;
+      const lastIndex = activeProjection().length - 1;
       chartHoverIndex = event.key === "Home" ? 0 : event.key === "End" ? lastIndex
         : Math.max(0, Math.min(lastIndex, (chartHoverIndex ?? -1) + (event.key === "ArrowLeft" ? -1 : 1)));
-      const row = currentResult.projection[chartHoverIndex];
+      const row = activeProjection()[chartHoverIndex];
       chartCanvas.dataset.hoverYear = String(row.year);
-      drawChart(currentResult.projection);
+      drawChart(activeProjection());
     });
     chartCanvas.addEventListener("blur", () => {
       if (!chartTouchSelected) clearChartHover();
@@ -2153,7 +2572,7 @@
       if (resizeRaf) window.cancelAnimationFrame(resizeRaf);
       resizeRaf = window.requestAnimationFrame(() => {
         if (currentResult) {
-          drawChart(currentResult.projection);
+          drawChart(activeProjection());
           revealSelectedMilestone();
           syncMilestoneNavigation();
         }
