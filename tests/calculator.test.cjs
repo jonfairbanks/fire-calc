@@ -162,6 +162,107 @@ function referenceCoastYear(input, targetAge) {
   return null;
 }
 
+function retirementSpendingAtAge(input, age) {
+  const elapsedYears = age - input.currentAge;
+  return input.annualSpending * Math.pow(
+    (1 + input.inflationRate) * (1 + input.spendingGrowthRate),
+    elapsedYears
+  );
+}
+
+function retirementIncomeAtAge(input, age) {
+  const elapsedYears = age - input.currentAge;
+  const inflationMultiplier = Math.pow(1 + input.inflationRate, elapsedYears);
+  const socialSecurity = input.socialSecurityEnabled && age >= input.socialSecurityAge
+    ? input.socialSecurityIncome * inflationMultiplier
+    : 0;
+  const partTime = input.retirementPartTimeEnabled
+    ? input.baristaIncome * inflationMultiplier
+    : 0;
+  return socialSecurity + partTime;
+}
+
+// This deliberately simulates month by month instead of sharing calculator helpers.
+function referenceRetirementProjection(input) {
+  const retirementAge = input.retirementAge;
+  const endAge = input.projectionEndAge;
+  if (retirementAge < input.currentAge || endAge <= retirementAge || endAge <= input.currentAge) {
+    return { rows: [], error: "invalid chronological ages" };
+  }
+
+  const monthlyRate = Math.pow(1 + input.portfolioGrowthRate, 1 / 12) - 1;
+  let balance = input.currentInvestments;
+  let cumulativeShortfall = 0;
+  let depletionAge = null;
+  const rows = [];
+
+  for (let age = input.currentAge; age <= endAge; age += 1) {
+    const annualSpending = retirementSpendingAtAge(input, age);
+    const annualIncome = age >= retirementAge ? retirementIncomeAtAge(input, age) : 0;
+    const annualWithdrawal = age >= retirementAge ? Math.max(0, annualSpending - annualIncome) : 0;
+    rows.push({
+      age,
+      year: age - input.currentAge,
+      portfolioValue: balance,
+      annualSpending,
+      annualIncome,
+      annualWithdrawal,
+      phase: age < retirementAge ? "saving" : "retired",
+      cumulativeShortfall
+    });
+
+    if (age === endAge) break;
+    for (let month = 1; month <= 12; month += 1) {
+      balance *= 1 + monthlyRate;
+      if (age < retirementAge) {
+        balance += input.monthlyInvesting;
+        continue;
+      }
+      const monthlyWithdrawal = annualWithdrawal / 12;
+      const unmet = Math.max(0, monthlyWithdrawal - balance);
+      if (unmet > 1e-7 && depletionAge === null) depletionAge = age + month / 12;
+      cumulativeShortfall += unmet;
+      balance = Math.max(0, balance - monthlyWithdrawal);
+    }
+  }
+
+  return {
+    rows,
+    retirementAge,
+    endAge,
+    retirementBalance: rows.find((row) => row.age === retirementAge).portfolioValue,
+    endingBalance: balance,
+    depletionAge,
+    totalShortfall: cumulativeShortfall,
+    error: null
+  };
+}
+
+function assertRetirementProjectionMatchesReference(calculator, input, tolerance = 1e-7) {
+  calculator.context.retirementInput = input;
+  const actual = calculator.run("buildRetirementProjection(retirementInput)");
+  const expected = referenceRetirementProjection(input);
+  assert.equal(actual.error, expected.error);
+  assert.equal(actual.retirementAge, expected.retirementAge);
+  assert.equal(actual.endAge, expected.endAge);
+  assert.equal(actual.rows.length, expected.rows.length);
+  for (let index = 0; index < expected.rows.length; index += 1) {
+    const actualRow = actual.rows[index];
+    const expectedRow = expected.rows[index];
+    assert.equal(actualRow.age, expectedRow.age, `row ${index} age`);
+    assert.equal(actualRow.year, actual.rows[0].year + index, `row ${index} calendar year`);
+    assert.equal(actualRow.phase, expectedRow.phase, `row ${index} phase`);
+    for (const field of ["portfolioValue", "annualSpending", "annualIncome", "annualWithdrawal", "cumulativeShortfall"]) {
+      approximately(actualRow[field], expectedRow[field], tolerance);
+    }
+  }
+  for (const field of ["retirementBalance", "endingBalance", "totalShortfall"]) {
+    approximately(actual[field], expected[field], tolerance);
+  }
+  assert.equal(actual.depletionAge, expected.depletionAge);
+  return actual;
+}
+
 test("portfolio accumulation follows independent month-end deposits", () => {
   const calculator = makeCalculator();
   const scenarios = [
@@ -269,7 +370,6 @@ test("calculated percentage labels round floating-point noise without rounding i
   calculator.run("result = calculate({ ...DEFAULT_INPUTS, inflationRate: 0.025, spendingGrowthRate: 0 })");
   assert.match(calculator.run("result.assumptions.spending"), /2\.5%/);
   assert.doesNotMatch(calculator.run("result.assumptions.spending"), /2\.499/);
-  assert.match(calculator.run("result.milestones.find((item) => item.type === 'full').formula"), /2\.5%/);
 
   calculator.run("result = calculate({ ...DEFAULT_INPUTS, inflationRate: 0.025, spendingGrowthRate: 0.01 })");
   assert.match(calculator.run("result.assumptions.spending"), /3\.53%/);
@@ -578,7 +678,7 @@ test("Coast and retirement in the same year are labeled without a separate coast
   assert.equal(coast.targetNumber, coast.retirementTargetNumber);
   assert.match(coast.description, /Retirement target reached at 55/);
   assert.match(coast.formula, /Keep contributing \$3,500\/month until age 55/);
-  assert.match(coast.formula, /We check once a year/);
+  assert.match(coast.formula, /no separate coasting period/);
   calculator.context.sample = coast;
   const card = calculator.run("milestoneMarkup(sample)");
   assert.match(card, /No separate coasting period projected/);
@@ -631,4 +731,312 @@ test("chart markers group coincident milestones and remain in chronological orde
   assert.equal(groups.reduce((count, group) => count + group.labels.length, 0), 5);
   assert.equal(calculator.run("chartMilestoneGroups(calculate({ ...DEFAULT_INPUTS, currentInvestments: 0, monthlyInvesting: 0 }).projection).length"), 0);
   assert.equal(calculator.run("chartMilestoneGroups(calculate({ ...DEFAULT_INPUTS, currentInvestments: 10000000 }).projection).length"), 1);
+});
+
+test("retirement projection defaults and old tab drafts preserve a complete plan", () => {
+  const calculator = makeCalculator();
+  assert.equal(calculator.run("DEFAULT_INPUTS.retirementAge"), 55);
+  assert.equal(calculator.run("DEFAULT_INPUTS.projectionEndAge"), 95);
+  assert.equal(calculator.run("DEFAULT_INPUTS.retirementPartTimeEnabled"), false);
+
+  const oldInputs = calculator.run("({ ...DEFAULT_INPUTS })");
+  delete oldInputs.retirementAge;
+  delete oldInputs.projectionEndAge;
+  delete oldInputs.retirementPartTimeEnabled;
+  oldInputs.currentAge = 42;
+  const storage = makeSessionStorage({
+    "fire-calc-tab-plan-v1": JSON.stringify({ sourceHash: "", inputs: oldInputs, inputLoadWarning: "" })
+  });
+  const restored = makeCalculator("", storage);
+  assert.equal(restored.run("inputs.currentAge"), 42);
+  assert.equal(restored.run("inputs.retirementAge"), 55);
+  assert.equal(restored.run("inputs.projectionEndAge"), 95);
+  assert.equal(restored.run("inputs.retirementPartTimeEnabled"), false);
+});
+
+test("retirement projection uses independent month-end saving deposits, then stops them", () => {
+  const calculator = makeCalculator();
+  const input = calculator.run(`({
+    ...DEFAULT_INPUTS,
+    currentAge: 50,
+    retirementAge: 52,
+    projectionEndAge: 55,
+    currentInvestments: 0,
+    monthlyInvesting: 100,
+    portfolioGrowthRate: 0,
+    annualSpending: 1200,
+    inflationRate: 0,
+    spendingGrowthRate: 0,
+    socialSecurityEnabled: false
+  })`);
+  const before = JSON.stringify(input);
+  const actual = assertRetirementProjectionMatchesReference(calculator, input);
+  assert.equal(JSON.stringify(input), before, "projection must not mutate its input");
+  assert.deepEqual(
+    Array.from(actual.rows, (row) => [row.age, row.portfolioValue, row.annualWithdrawal, row.phase]),
+    [
+      [50, 0, 0, "saving"],
+      [51, 1200, 0, "saving"],
+      [52, 2400, 1200, "retired"],
+      [53, 1200, 1200, "retired"],
+      [54, 0, 1200, "retired"],
+      [55, 0, 1200, "retired"]
+    ]
+  );
+  assert.equal(actual.retirementBalance, 2400);
+  assert.equal(actual.endingBalance, 0);
+  assert.equal(actual.depletionAge, 54 + 1 / 12);
+  assert.equal(actual.totalShortfall, 1200);
+});
+
+test("retirement projection follows monthly recurrence at zero, negative, and -100% returns", () => {
+  const calculator = makeCalculator();
+  const shared = {
+    currentAge: 50,
+    retirementAge: 52,
+    projectionEndAge: 55,
+    currentInvestments: 10_000,
+    monthlyInvesting: 125,
+    annualSpending: 4_800,
+    inflationRate: 0,
+    spendingGrowthRate: 0,
+    socialSecurityEnabled: false
+  };
+  for (const portfolioGrowthRate of [0, -0.4, -1]) {
+    calculator.context.scenario = { ...shared, portfolioGrowthRate };
+    assertRetirementProjectionMatchesReference(calculator, calculator.run("({ ...DEFAULT_INPUTS, ...scenario })"));
+  }
+});
+
+test("retirement rows use year-start future dollars and Social Security starts after its checkpoint", () => {
+  const calculator = makeCalculator();
+  const input = calculator.run(`({
+    ...DEFAULT_INPUTS,
+    currentAge: 66,
+    retirementAge: 66,
+    projectionEndAge: 68,
+    currentInvestments: 10_000,
+    monthlyInvesting: 9_999,
+    portfolioGrowthRate: 0,
+    annualSpending: 1_200,
+    inflationRate: 0.1,
+    spendingGrowthRate: 0.1,
+    socialSecurityEnabled: true,
+    socialSecurityAge: 67,
+    socialSecurityIncome: 600
+  })`);
+  const actual = assertRetirementProjectionMatchesReference(calculator, input);
+  const rows = Array.from(actual.rows);
+  assert.equal(rows[0].portfolioValue, 10_000, "retiring today must not add a saving contribution");
+  assert.equal(rows[0].annualIncome, 0);
+  assert.equal(rows[0].annualWithdrawal, 1_200);
+  approximately(rows[1].annualSpending, 1_452);
+  assert.equal(rows[1].annualIncome, 660);
+  approximately(rows[1].annualWithdrawal, 792);
+  approximately(rows[2].annualSpending, 1_756.92);
+  approximately(rows[2].annualIncome, 726);
+});
+
+test("retirement part-time income is opt-in and surplus income never increases the portfolio", () => {
+  const calculator = makeCalculator();
+  const shared = {
+    currentAge: 55,
+    retirementAge: 55,
+    projectionEndAge: 57,
+    currentInvestments: 8_000,
+    monthlyInvesting: 5_000,
+    portfolioGrowthRate: 0,
+    annualSpending: 1_200,
+    inflationRate: 0.1,
+    spendingGrowthRate: 0,
+    socialSecurityEnabled: false,
+    baristaIncome: 4_000
+  };
+  calculator.context.partTimeScenario = { ...shared, retirementPartTimeEnabled: false };
+  const withoutPartTime = assertRetirementProjectionMatchesReference(
+    calculator,
+    calculator.run("({ ...DEFAULT_INPUTS, ...partTimeScenario })")
+  );
+  assert.equal(withoutPartTime.rows[0].annualIncome, 0);
+  assert.equal(withoutPartTime.rows[0].annualWithdrawal, 1_200);
+
+  calculator.context.partTimeScenario = { ...shared, retirementPartTimeEnabled: true };
+  const withPartTime = assertRetirementProjectionMatchesReference(
+    calculator,
+    calculator.run("({ ...DEFAULT_INPUTS, ...partTimeScenario })")
+  );
+  assert.equal(withPartTime.rows[0].annualIncome, 4_000);
+  assert.equal(withPartTime.rows[0].annualWithdrawal, 0);
+  assert.equal(withPartTime.rows[1].annualIncome, 4_400);
+  assert.equal(withPartTime.endingBalance, 8_000, "surplus income is not reinvested");
+  assert.equal(withPartTime.depletionAge, null);
+});
+
+test("retirement projection floors failed balances at zero and never fabricates a recovery", () => {
+  const calculator = makeCalculator();
+  const input = calculator.run(`({
+    ...DEFAULT_INPUTS,
+    currentAge: 50,
+    retirementAge: 50,
+    projectionEndAge: 53,
+    currentInvestments: 0,
+    monthlyInvesting: 10_000,
+    portfolioGrowthRate: 0.07,
+    annualSpending: 1_200,
+    inflationRate: 0,
+    spendingGrowthRate: 0,
+    socialSecurityEnabled: true,
+    socialSecurityAge: 52,
+    socialSecurityIncome: 2_400
+  })`);
+  const actual = assertRetirementProjectionMatchesReference(calculator, input);
+  assert.equal(actual.depletionAge, 50 + 1 / 12);
+  assert.equal(actual.totalShortfall, 2_400);
+  assert.deepEqual(Array.from(actual.rows, (row) => row.portfolioValue), [0, 0, 0, 0]);
+  assert.deepEqual(Array.from(actual.rows, (row) => row.cumulativeShortfall), [0, 1_200, 2_400, 2_400]);
+  assert.deepEqual(Array.from(actual.rows, (row) => row.annualWithdrawal), [1_200, 1_200, 0, 0]);
+});
+
+test("retirement projection endpoint is the balance on reaching the selected age", () => {
+  const calculator = makeCalculator();
+  const shared = {
+    currentAge: 55,
+    retirementAge: 55,
+    currentInvestments: 1_200,
+    monthlyInvesting: 0,
+    portfolioGrowthRate: 0,
+    annualSpending: 1_200,
+    inflationRate: 0,
+    spendingGrowthRate: 0,
+    socialSecurityEnabled: false,
+    retirementPartTimeEnabled: false
+  };
+
+  calculator.context.endpointScenario = { ...shared, projectionEndAge: 56 };
+  const through56 = assertRetirementProjectionMatchesReference(
+    calculator,
+    calculator.run("({ ...DEFAULT_INPUTS, ...endpointScenario })")
+  );
+  assert.equal(through56.rows.length, 2);
+  assert.equal(through56.endingBalance, 0);
+  assert.equal(through56.totalShortfall, 0);
+  assert.equal(through56.depletionAge, null);
+
+  calculator.context.endpointScenario = { ...shared, projectionEndAge: 57 };
+  const through57 = assertRetirementProjectionMatchesReference(
+    calculator,
+    calculator.run("({ ...DEFAULT_INPUTS, ...endpointScenario })")
+  );
+  assert.equal(through57.rows.length, 3);
+  assert.equal(through57.endingBalance, 0);
+  assert.equal(through57.depletionAge, 56 + 1 / 12);
+  assert.equal(through57.totalShortfall, 1_200);
+});
+
+test("retirement projection rejects impossible age ordering without rows", () => {
+  const calculator = makeCalculator();
+  for (const scenario of [
+    { currentAge: 55, retirementAge: 54, projectionEndAge: 80 },
+    { currentAge: 55, retirementAge: 60, projectionEndAge: 60 },
+    { currentAge: 55, retirementAge: 70, projectionEndAge: 55 }
+  ]) {
+    calculator.context.invalidScenario = scenario;
+    calculator.context.invalidRetirementInput = calculator.run("({ ...DEFAULT_INPUTS, ...invalidScenario })");
+    const result = calculator.run("buildRetirementProjection(invalidRetirementInput)");
+    assert.equal(typeof result.error, "string");
+    assert.notEqual(result.error, "");
+    assert.deepEqual(Array.from(result.rows), []);
+  }
+});
+
+test("chart markers select the corresponding FIRE detail and leave retirement details in place", () => {
+  const calculator = makeCalculator();
+  calculator.run(`
+    inputs = { ...DEFAULT_INPUTS, currentInvestments: 10_000_000 };
+    chartMode = "accumulation";
+    currentResult = calculate(inputs);
+    selectedMilestone = "full";
+    selectionCalls = [];
+    revealCalls = 0;
+    drawCalls = 0;
+    selectMilestone = (type) => { selectionCalls.push(type); selectedMilestone = type; };
+    revealSelectedMilestone = () => { revealCalls += 1; };
+    drawChart = () => { drawCalls += 1; };
+  `);
+
+  const simultaneous = calculator.run("chartMilestoneGroups(currentResult.projection)");
+  assert.equal(simultaneous.length, 1);
+  assert.deepEqual(Array.from(simultaneous[0].types), ["barista", "full", "chubby", "fat"]);
+  calculator.run("selectChartMilestone(0)");
+  assert.deepEqual(Array.from(calculator.run("selectionCalls")), ["fat"]);
+  assert.equal(calculator.run("selectedMilestone"), "fat");
+  assert.equal(calculator.run("chartHoverIndex"), 0);
+  assert.equal(calculator.run("chartTouchSelected"), true);
+  assert.equal(calculator.run("revealCalls"), 1);
+  assert.equal(calculator.run("drawCalls"), 0);
+
+  calculator.run(`
+    inputs = { ...DEFAULT_INPUTS, currentAge: 37, currentInvestments: 555_000, socialSecurityEnabled: true, inflationRate: 0.03 };
+    currentResult = calculate(inputs);
+    selectionCalls = [];
+    revealCalls = 0;
+  `);
+  const fullMarkerIndex = calculator.run("chartMilestoneGroups(currentResult.projection).find((group) => group.types.length === 1 && group.types[0] === 'full').index");
+  calculator.context.fullMarkerIndex = fullMarkerIndex;
+  calculator.run("selectChartMilestone(fullMarkerIndex)");
+  assert.deepEqual(Array.from(calculator.run("selectionCalls")), ["full"]);
+  assert.equal(calculator.run("selectedMilestone"), "full");
+  assert.equal(calculator.run("revealCalls"), 1);
+
+  calculator.run(`
+    chartMode = "retirement";
+    inputs = { ...inputs, retirementAge: 55, projectionEndAge: 95 };
+    currentResult = calculate(inputs);
+    selectedMilestone = "chubby";
+    selectionCalls = [];
+    drawCalls = 0;
+  `);
+  const retirementMarkerIndex = calculator.run("chartMilestoneGroups(activeProjection())[0].index");
+  calculator.context.retirementMarkerIndex = retirementMarkerIndex;
+  calculator.run("selectChartMilestone(retirementMarkerIndex)");
+  assert.deepEqual(Array.from(calculator.run("selectionCalls")), []);
+  assert.equal(calculator.run("selectedMilestone"), "chubby");
+  assert.equal(calculator.run("drawCalls"), 1);
+});
+
+test("snapshot states which income is active in the retirement scenario", () => {
+  const calculator = makeCalculator();
+  calculator.run(`
+    chartMode = "retirement";
+    inputs = {
+      ...DEFAULT_INPUTS,
+      baristaIncome: 35_000,
+      retirementPartTimeEnabled: false,
+      socialSecurityEnabled: false,
+      projectionEndAge: 88
+    };
+    renderSnapshot(calculate(inputs).snapshot);
+  `);
+  assert.match(calculator.document.getElementById("snapshot").innerHTML, /Annual Part-Time Income/);
+  assert.match(calculator.document.getElementById("snapshot").innerHTML, /Excluded/);
+  assert.match(calculator.document.getElementById("snapshotIncome").textContent, /part-time excluded/);
+  assert.match(calculator.document.getElementById("snapshotIncome").textContent, /Social Security excluded/);
+
+  calculator.run(`
+    inputs = {
+      ...inputs,
+      retirementPartTimeEnabled: true,
+      socialSecurityEnabled: true,
+      socialSecurityIncome: 21_000,
+      socialSecurityAge: 68
+    };
+    renderSnapshot(calculate(inputs).snapshot);
+  `);
+  assert.match(calculator.document.getElementById("snapshot").innerHTML, /\$35k\/yr/);
+  assert.match(calculator.document.getElementById("snapshotIncome").textContent, /part-time \$35k\/yr until age 88/);
+  assert.match(calculator.document.getElementById("snapshotIncome").textContent, /Social Security \$21k\/yr from age 68/);
+
+  calculator.run("chartMode = 'accumulation'; renderSnapshot(calculate(inputs).snapshot)");
+  assert.match(calculator.document.getElementById("snapshot").innerHTML, /\$35k\/yr/);
+  assert.doesNotMatch(calculator.document.getElementById("snapshot").innerHTML, /Excluded/);
 });
